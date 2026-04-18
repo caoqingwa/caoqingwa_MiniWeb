@@ -10,9 +10,9 @@
 int main() {
     WSADATA wsa;
     if(WSAStartup(MAKEWORD(2, 2), &wsa))
-		throw std::runtime_error("WSAStartup failed");
-	ThreadPool pool(4);
-    
+        throw std::runtime_error("WSAStartup failed");
+    ThreadPool pool(4);
+
     SOCKET server_fd = socket(AF_INET, SOCK_STREAM, 0);
 
     sockaddr_in addr{};
@@ -32,57 +32,60 @@ int main() {
     while (true) {
         read_set = master_set;
 
-        // select监听
         int activity = select(0, &read_set, NULL, NULL, NULL);
-
-        if (activity < 0) {
-            std::cout << "select error\n";
+        if (activity == SOCKET_ERROR) {
+            std::cout << "select error: " << WSAGetLastError() << "\n";
             break;
         }
 
-        // 遍历所有socket
-        for (int i = 0; i < master_set.fd_count; i++) {
-            SOCKET sock = master_set.fd_array[i];
+        // 遍历socket
+        for (u_int i = 0; i < read_set.fd_count; ++i) {
+            SOCKET sock = read_set.fd_array[i];
 
-            if (FD_ISSET(sock, &read_set)) {
-
-                // 1️⃣ 新连接
-                if (sock == server_fd) {
-                    SOCKET client = accept(server_fd, nullptr, nullptr);
-
-                    FD_SET(client, &master_set);
-
-                    std::cout << "New client connected\n";
+            // 新连接
+            if (sock == server_fd) {
+                SOCKET client = accept(server_fd, nullptr, nullptr);
+                if (client == INVALID_SOCKET) {
+                    std::cout << "accept error: " << WSAGetLastError() << "\n";
+                    continue;
                 }
-                // 2️⃣ 客户端发数据
-                else {
-                    SOCKET client_sock = sock;
 
-                    pool.enqueue([client_sock]() {
-                        char buffer[1024] = { 0 };
-                        int bytes = recv(client_sock, buffer, 1024, 0);
+                u_long mode = 1;
+                ioctlsocket(client, FIONBIO, &mode);
+                FD_SET(client, &master_set);
 
-                        if (bytes <= 0) {
-                            closesocket(client_sock);
-                            return;
-                        }
-
-                        std::cout << "Request:\n" << buffer << std::endl;
-
-                        const char* response =
-                            "HTTP/1.1 200 OK\r\n"
-                            "Content-Type: text/html\r\n\r\n"
-                            "<h1>Hello ThreadPool Server</h1>";
-
-                            send(client_sock, response, strlen(response), 0);
-
-                            closesocket(client_sock);
-                        });
-                }
+                std::cout << "New client connected\n";
+                continue;
             }
+
+            // 客户端可读
+            char buffer[1024] = { 0 };
+            int bytes = recv(sock, buffer, sizeof(buffer), 0);
+
+            if (bytes <= 0) {
+                // 断开或错误
+                closesocket(sock);
+                FD_CLR(sock, &master_set);
+                std::cout << "Client disconnected\n";
+                continue;
+            }
+
+            SOCKET client_sock = sock;
+            pool.enqueue([client_sock]() {
+                const char* body = "<h1>Hello ThreadPool</h1>";
+                const char* response =
+                    "HTTP/1.1 200 OK\r\n"
+                    "Content-Type: text/html\r\n"
+                    "Content-Length: 25\r\n"
+                    "Connection: keep-alive\r\n\r\n"
+                    "<h1>Hello ThreadPool</h1>";
+
+                send(client_sock, response, (int)strlen(response), 0);
+                shutdown(client_sock, SD_BOTH);
+                closesocket(client_sock);
+            });
         }
     }
-
     WSACleanup();
     return 0;
 }
