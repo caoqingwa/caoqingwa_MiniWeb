@@ -1,0 +1,10 @@
+﻿#pragma once
+
+class EventLoop {
+public:
+    virtual void init(int port) = 0;
+    virtual void loop() = 0;
+    virtual ~EventLoop() {}
+};
+
+EventLoop* create_event_loop();

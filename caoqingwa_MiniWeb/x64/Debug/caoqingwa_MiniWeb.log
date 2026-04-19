@@ -1,2 +1,16 @@
 ﻿  main.cpp
-  caoqingwa_MiniWeb.vcxproj -> F:\Projects\caoqingwa_Mini_Web\caoqingwa_MiniWeb\x64\Debug\caoqingwa_MiniWeb.exe
+main.obj : error LNK2019: 无法解析的外部符号 __imp_accept，函数 main 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_bind，函数 main 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_closesocket，函数 "public: __cdecl `int __cdecl main(void)'::`24'::<lambda_1>::operator()(void)const " (??R<lambda_1>@?BI@??main@@YAHXZ@QEBA@XZ) 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_ioctlsocket，函数 main 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_htons，函数 main 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_listen，函数 main 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_recv，函数 main 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_select，函数 main 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_send，函数 "public: __cdecl `int __cdecl main(void)'::`24'::<lambda_1>::operator()(void)const " (??R<lambda_1>@?BI@??main@@YAHXZ@QEBA@XZ) 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_shutdown，函数 "public: __cdecl `int __cdecl main(void)'::`24'::<lambda_1>::operator()(void)const " (??R<lambda_1>@?BI@??main@@YAHXZ@QEBA@XZ) 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_socket，函数 main 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_WSAStartup，函数 main 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_WSACleanup，函数 main 中引用了该符号
+main.obj : error LNK2019: 无法解析的外部符号 __imp_WSAGetLastError，函数 main 中引用了该符号
+F:\Projects\caoqingwa_Mini_Web\caoqingwa_MiniWeb\x64\Debug\caoqingwa_MiniWeb.exe : fatal error LNK1120: 14 个无法解析的外部命令

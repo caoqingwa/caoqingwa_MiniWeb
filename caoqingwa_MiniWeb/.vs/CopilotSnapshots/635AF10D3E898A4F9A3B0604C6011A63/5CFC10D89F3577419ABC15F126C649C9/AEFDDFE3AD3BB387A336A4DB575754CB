@@ -1,0 +1,14 @@
+﻿#include "event_loop.h"
+
+#define SERVER_IP "0.0.0.0"
+#define SERVER_PORT 8080
+
+int main() {
+    EventLoop* loop = create_event_loop();
+
+    (void)SERVER_IP;
+    loop->init(SERVER_PORT);
+    loop->loop();
+    delete loop;
+    return 0;
+}

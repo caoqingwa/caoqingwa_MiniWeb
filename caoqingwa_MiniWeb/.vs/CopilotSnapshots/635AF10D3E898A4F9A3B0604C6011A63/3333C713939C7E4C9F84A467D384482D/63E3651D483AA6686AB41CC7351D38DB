@@ -1,0 +1,23 @@
+﻿#include "event_loop.h"
+
+#ifdef _WIN32
+#include "platform/win/selete_loop.cpp"
+#else
+#include "platform/linux/epoll_loop.cpp"
+#endif
+
+int main() {
+    EventLoop* loop;
+
+#ifdef _WIN32
+    loop = new SelectLoop();
+#else
+    loop = new EpollLoop();
+#endif
+
+    loop->init(8080);
+    loop->loop();
+
+    delete loop;
+    return 0;
+}
