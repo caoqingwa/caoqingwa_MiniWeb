@@ -135,7 +135,7 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "platform/win/selete_loop.cpp",
+			"path" : "platform/win/select_loop.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
