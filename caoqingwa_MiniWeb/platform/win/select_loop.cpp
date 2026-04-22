@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
 #include <unordered_map>
 #include <vector>
 #include "threadpool.h"
@@ -12,28 +13,52 @@
 
 class SelectLoop : public EventLoop {
 private:
-    SOCKET server_fd;
-    fd_set master_set;
+    SOCKET server_fd{ INVALID_SOCKET };
+    fd_set master_set{};
     ThreadPool thread_pool{ 4 };
     std::unordered_map<SOCKET, int> client_ids;
     int next_client_id{ 1 };
     std::vector<int> free_client_ids;
 
 public:
+    SelectLoop() {
+        FD_ZERO(&master_set);
+    }
+
+    ~SelectLoop() override {
+        if (server_fd != INVALID_SOCKET) {
+            closesocket(server_fd);
+            server_fd = INVALID_SOCKET;
+        }
+        WSACleanup();
+    }
+
     void init(int port) override {
         WSADATA wsa;
-        if(WSAStartup(MAKEWORD(2, 2), &wsa))
-			throw std::runtime_error("WSAStartup failed");
+        if (WSAStartup(MAKEWORD(2, 2), &wsa)) {
+            throw std::runtime_error("WSAStartup failed");
+        }
 
         server_fd = socket(AF_INET, SOCK_STREAM, 0);
+        if (server_fd == INVALID_SOCKET) {
+            throw std::runtime_error("socket failed");
+        }
+
+        const BOOL optval = TRUE;
+        setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&optval), sizeof(optval));
 
         sockaddr_in addr{};
         addr.sin_family = AF_INET;
         addr.sin_port = htons(port);
         addr.sin_addr.s_addr = INADDR_ANY;
 
-        bind(server_fd, (sockaddr*)&addr, sizeof(addr));
-		listen(server_fd, 32);//至多32个连接
+        if (bind(server_fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == SOCKET_ERROR) {
+            throw std::runtime_error("bind failed");
+        }
+
+        if (listen(server_fd, 32) == SOCKET_ERROR) {
+            throw std::runtime_error("listen failed");
+        }
 
         FD_ZERO(&master_set);
         FD_SET(server_fd, &master_set);
@@ -42,9 +67,12 @@ public:
     void loop() override {
         while (true) {
             fd_set read_set = master_set;
-            select(0, &read_set, NULL, NULL, NULL);
+            int ready = select(0, &read_set, nullptr, nullptr, nullptr);
+            if (ready == SOCKET_ERROR) {
+                continue;
+            }
 
-            for (int i = 0; i < read_set.fd_count; i++) {
+            for (u_int i = 0; i < read_set.fd_count; i++) {
                 SOCKET sock = read_set.fd_array[i];
 
                 if (sock == server_fd) {
@@ -56,10 +84,12 @@ public:
                     }
 
                     if (client_ids.find(client) != client_ids.end()) {
+                        closesocket(client);
                         continue;
                     }
 
                     FD_SET(client, &master_set);
+
                     int client_id;
                     if (!free_client_ids.empty()) {
                         client_id = free_client_ids.back();
@@ -68,8 +98,9 @@ public:
                     else {
                         client_id = next_client_id++;
                     }
+
                     client_ids[client] = client_id;
-                    std::cout << "[client " << client_id << "] connected" << std::endl;
+                    std::cout << "[client win " << client_id << "] connected" << std::endl;
                 }
                 else {
                     char buf[1024];

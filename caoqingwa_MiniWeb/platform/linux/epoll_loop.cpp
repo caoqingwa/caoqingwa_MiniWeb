@@ -1,6 +1,7 @@
 ﻿#include "event_loop.h"
 #include <sys/epoll.h>
 #include <arpa/inet.h>
+#include <iostream>
 #include <unistd.h>
 #include <fstream>
 #include <sstream>
@@ -71,7 +72,7 @@ public:
                         client_id = next_client_id++;
                     }
                     client_ids[client] = client_id;
-                    std::cout << "[client " << client_id << "] connected" << std::endl;
+                    std::cout << "[clientlinux " << client_id << "] connected" << std::endl;
                 }
                 else {
                     char buf[1024];
