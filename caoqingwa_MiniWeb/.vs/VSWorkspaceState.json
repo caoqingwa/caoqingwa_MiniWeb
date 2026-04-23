@@ -14,7 +14,7 @@
       "out\\install\\Linux-GCC-Debug"
     ]
   },
-  "ActiveTargetSystem": "Local Machine",
+  "ActiveTargetSystem": "192.168.169.129",
   "ExpandedNodes": [
     "",
     "\\include",
