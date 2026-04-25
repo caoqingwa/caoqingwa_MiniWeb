@@ -100,7 +100,7 @@ public:
                     }
 
                     client_ids[client] = client_id;
-                    std::cout << "[client win " << client_id << "] connected" << std::endl;
+                    std::cout << "[client " << client_id << "] connected" << std::endl;
                 }
                 else {
                     char buf[1024];

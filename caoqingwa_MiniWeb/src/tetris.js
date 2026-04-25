@@ -90,7 +90,9 @@ function createPiece(type) {
     }
 }
 
-function drawMatrix(matrix, offset) {
+function drawMatrix(matrix, offset, outline = false) {
+    context.save();
+
     matrix.forEach((row, y) => {
         row.forEach((value, x) => {
             if (value !== 0) {
@@ -99,11 +101,62 @@ function drawMatrix(matrix, offset) {
             }
         });
     });
+
+    if (!outline) {
+        context.restore();
+        return;
+    }
+
+    context.lineWidth = 0.08;
+    context.strokeStyle = 'rgba(255,255,255,0.95)';
+    context.lineJoin = 'round';
+    context.lineCap = 'round';
+
+    matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value === 0) {
+                return;
+            }
+
+            const cellX = x + offset.x;
+            const cellY = y + offset.y;
+
+            if (!matrix[y - 1] || matrix[y - 1][x] === 0) {
+                context.beginPath();
+                context.moveTo(cellX, cellY);
+                context.lineTo(cellX + 1, cellY);
+                context.stroke();
+            }
+
+            if (!matrix[y + 1] || matrix[y + 1][x] === 0) {
+                context.beginPath();
+                context.moveTo(cellX, cellY + 1);
+                context.lineTo(cellX + 1, cellY + 1);
+                context.stroke();
+            }
+
+            if (!row[x - 1] || row[x - 1] === 0) {
+                context.beginPath();
+                context.moveTo(cellX, cellY);
+                context.lineTo(cellX, cellY + 1);
+                context.stroke();
+            }
+
+            if (!row[x + 1] || row[x + 1] === 0) {
+                context.beginPath();
+                context.moveTo(cellX + 1, cellY);
+                context.lineTo(cellX + 1, cellY + 1);
+                context.stroke();
+            }
+        });
+    });
+
+    context.restore();
 }
 
 function drawGrid() {
     context.save();
-    context.strokeStyle = 'rgba(255,255,255,0.5)'; // 半透明白色
+    context.strokeStyle = 'rgba(255,255,255,0.3)'; // 透明度
     context.lineWidth = 0.08; // 更粗
     for (let x = 0; x <= 12; x++) {
         context.beginPath();
@@ -125,7 +178,7 @@ function draw() {
     context.fillRect(0, 0, canvas.width, canvas.height);
     drawGrid();
     drawMatrix(arena, {x: 0, y: 0});
-    drawMatrix(player.matrix, player.pos);
+    drawMatrix(player.matrix, player.pos, true);
 }
 
 function merge(arena, player) {
@@ -236,7 +289,9 @@ document.addEventListener('keydown', event => {
         playerMove(1);
     } else if (event.key === 'ArrowDown') {
         playerDrop();
-    } else if (event.code === 'Numpad0' || event.keyCode === 96) {
+    } else if (event.key === 'q' || event.key === 'Q') {
+        playerRotate(-1);
+    } else if (event.key === 'e' || event.key === 'E') {
         playerRotate(1);
     }
 });

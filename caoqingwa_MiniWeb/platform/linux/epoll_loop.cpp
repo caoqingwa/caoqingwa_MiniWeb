@@ -72,7 +72,7 @@ public:
                         client_id = next_client_id++;
                     }
                     client_ids[client] = client_id;
-                    std::cout << "[clientlinux " << client_id << "] connected" << std::endl;
+                    std::cout << "[client " << client_id << "] connected" << std::endl;
                 }
                 else {
                     char buf[1024];
@@ -114,15 +114,22 @@ public:
                             : request_path;
 
                         std::ifstream file;
-                        const std::string candidates[] = {
+                        std::vector<std::string> candidates = {
                             std::string("src/") + relative_path,
                             relative_path,
                             std::string("../src/") + relative_path,
-                            std::string("../../src/") + relative_path
+                            std::string("../../src/") + relative_path,
+                            std::string("../../../src/") + relative_path,
+                            std::string("../../../src/src/") + relative_path,
+                            std::string("../../../../src/") + relative_path,
+                            std::string("../../../../src/src/") + relative_path
                         };
+
+                        std::string matched_path;
                         for (const auto& path : candidates) {
                             file.open(path, std::ios::binary);
                             if (file.is_open()) {
+                                matched_path = path;
                                 break;
                             }
                             file.clear();
@@ -130,6 +137,8 @@ public:
 
                         std::string response;
                         if (file.is_open()) {
+                            std::cout << "[static] hit: " << matched_path << std::endl;
+
                             std::ostringstream body_stream;
                             body_stream << file.rdbuf();
                             std::string body = body_stream.str();
