@@ -3,31 +3,40 @@
   "WorkspaceRootPath": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\platform\\linux\\epoll_loop.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:platform\\linux\\epoll_loop.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\platform\\win\\select_loop.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:platform\\win\\select_loop.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\include\\threadpool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:include\\threadpool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb.vcxproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:caoqingwa_MiniWeb.vcxproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\CMakeLists.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CMakeLists.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\caoqingwa\\AppData\\Local\\Microsoft\\Linux\\HeaderCache\\1.0\\-1962152737\\usr\\include\\stdlib.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\src\\http_conn.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\http_conn.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\include\\http_conn.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:include\\http_conn.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\platform\\linux\\epoll_loop.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:platform\\linux\\epoll_loop.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\src\\threadpool.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\threadpool.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\include\\threadpool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:include\\threadpool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\include\\event_loop.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -41,17 +50,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "main.cpp",
               "DocumentMoniker": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\src\\main.cpp",
               "RelativeDocumentMoniker": "src\\main.cpp",
               "ToolTip": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\src\\main.cpp",
               "RelativeToolTip": "src\\main.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAATAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-19T04:53:55.702Z",
               "IsPinned": true,
@@ -59,13 +68,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "stdlib.h",
-              "DocumentMoniker": "C:\\Users\\caoqingwa\\AppData\\Local\\Microsoft\\Linux\\HeaderCache\\1.0\\-1962152737\\usr\\include\\stdlib.h",
-              "ToolTip": "C:\\Users\\caoqingwa\\AppData\\Local\\Microsoft\\Linux\\HeaderCache\\1.0\\-1962152737\\usr\\include\\stdlib.h",
-              "ViewState": "AgIAACUBAAAAAAAAAAD4vzABAAAJAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "http_conn.h",
+              "DocumentMoniker": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\include\\http_conn.h",
+              "RelativeDocumentMoniker": "include\\http_conn.h",
+              "ToolTip": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\include\\http_conn.h",
+              "RelativeToolTip": "include\\http_conn.h",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-21T13:32:40.831Z",
+              "WhenOpened": "2026-04-26T05:39:13.043Z",
               "EditorCaption": ""
             },
             {
@@ -76,27 +87,27 @@
               "RelativeDocumentMoniker": "platform\\win\\select_loop.cpp",
               "ToolTip": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\platform\\win\\select_loop.cpp",
               "RelativeToolTip": "platform\\win\\select_loop.cpp",
-              "ViewState": "AgIAAGMAAAAAAAAAAAAAAGYAAAApAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-19T04:18:11.442Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "epoll_loop.cpp",
               "DocumentMoniker": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\platform\\linux\\epoll_loop.cpp",
               "RelativeDocumentMoniker": "platform\\linux\\epoll_loop.cpp",
               "ToolTip": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\platform\\linux\\epoll_loop.cpp",
               "RelativeToolTip": "platform\\linux\\epoll_loop.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-19T04:10:41.605Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "event_loop.h",
               "DocumentMoniker": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\include\\event_loop.h",
               "RelativeDocumentMoniker": "include\\event_loop.h",
@@ -109,7 +120,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "threadpool.cpp",
               "DocumentMoniker": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\src\\threadpool.cpp",
               "RelativeDocumentMoniker": "src\\threadpool.cpp",
@@ -122,13 +133,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 8,
               "Title": "threadpool.h",
               "DocumentMoniker": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\include\\threadpool.h",
               "RelativeDocumentMoniker": "include\\threadpool.h",
               "ToolTip": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\include\\threadpool.h",
               "RelativeToolTip": "include\\threadpool.h",
-              "ViewState": "AgIAABcAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-04-19T03:53:48.252Z",
               "EditorCaption": ""
@@ -141,9 +152,35 @@
               "RelativeDocumentMoniker": "CMakeLists.txt",
               "ToolTip": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\CMakeLists.txt",
               "RelativeToolTip": "CMakeLists.txt",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
               "WhenOpened": "2026-04-19T03:56:18.501Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "caoqingwa_MiniWeb.vcxproj",
+              "DocumentMoniker": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb.vcxproj",
+              "RelativeDocumentMoniker": "caoqingwa_MiniWeb.vcxproj",
+              "ToolTip": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb.vcxproj",
+              "RelativeToolTip": "caoqingwa_MiniWeb.vcxproj",
+              "ViewState": "AgIAAH0AAAAAAAAAAADwv4oAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000698|",
+              "WhenOpened": "2026-04-26T06:18:16.825Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "http_conn.cpp",
+              "DocumentMoniker": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\src\\http_conn.cpp",
+              "RelativeDocumentMoniker": "src\\http_conn.cpp",
+              "ToolTip": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\src\\http_conn.cpp",
+              "RelativeToolTip": "src\\http_conn.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-04-26T05:40:00.536Z",
               "EditorCaption": ""
             }
           ]

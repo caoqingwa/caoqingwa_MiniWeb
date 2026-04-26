@@ -131,9 +131,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="platform\win\select_loop.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\threadpool.cpp" />
+    <ClCompile Include="src\http_conn.cpp" />
+    <ClCompile Include="platform\win\select_loop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\threadpool.h" />

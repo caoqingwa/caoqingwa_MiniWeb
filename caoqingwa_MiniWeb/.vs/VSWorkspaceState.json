@@ -14,15 +14,10 @@
       "out\\install\\Linux-GCC-Debug"
     ]
   },
-  "ActiveTargetSystem": "192.168.169.129",
+  "ActiveTargetSystem": "Local Machine",
   "ExpandedNodes": [
-    "",
-    "\\include",
-    "\\platform",
-    "\\platform\\linux",
-    "\\platform\\win",
-    "\\src"
+    ""
   ],
-  "SelectedNode": "\\CMakeLists.txt",
+  "SelectedNode": "\\F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\CMakeLists.txt\\server.exe\\F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\platform\\win\\select_loop.cpp",
   "PreviewInSolutionExplorer": true
 }

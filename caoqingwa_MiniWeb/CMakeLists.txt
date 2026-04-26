@@ -2,16 +2,27 @@
 project(mini_webserver)
 
 set(CMAKE_CXX_STANDARD 17)
-
-include_directories(include)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(WIN32)
-    file(GLOB SRC "${CMAKE_CURRENT_SOURCE_DIR}/platform/win/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+    file(GLOB PLATFORM_SRC CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/platform/win/*.cpp")
 else()
-    file(GLOB SRC "${CMAKE_CURRENT_SOURCE_DIR}/platform/linux/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+    file(GLOB PLATFORM_SRC CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/platform/linux/*.cpp")
 endif()
 
-add_executable(server ${SRC} "include/event_loop.h")
+file(GLOB CORE_SRC CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+
+add_executable(server
+    ${CORE_SRC}
+    ${PLATFORM_SRC}
+)
+
+target_include_directories(server PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
 
 if(WIN32)
     target_link_libraries(server PRIVATE ws2_32)
