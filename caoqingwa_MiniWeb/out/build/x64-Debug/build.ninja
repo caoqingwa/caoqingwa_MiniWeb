@@ -49,6 +49,14 @@ cmake_ninja_workdir = F$:\Projects\caoqingwa_Mini_Web\caoqingwa_MiniWeb\caoqingw
 
 build cmake_object_order_depends_target_server: phony || .
 
+build CMakeFiles\server.dir\src\buffer.cpp.obj: CXX_COMPILER__server_unscanned_Debug F$:\Projects\caoqingwa_Mini_Web\caoqingwa_MiniWeb\caoqingwa_MiniWeb\src\buffer.cpp || cmake_object_order_depends_target_server
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 -std:c++17
+  INCLUDES = -IF:\Projects\caoqingwa_Mini_Web\caoqingwa_MiniWeb\caoqingwa_MiniWeb\include
+  OBJECT_DIR = CMakeFiles\server.dir
+  OBJECT_FILE_DIR = CMakeFiles\server.dir\src
+  TARGET_COMPILE_PDB = CMakeFiles\server.dir\
+  TARGET_PDB = server.pdb
+
 build CMakeFiles\server.dir\src\http_conn.cpp.obj: CXX_COMPILER__server_unscanned_Debug F$:\Projects\caoqingwa_Mini_Web\caoqingwa_MiniWeb\caoqingwa_MiniWeb\src\http_conn.cpp || cmake_object_order_depends_target_server
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 -std:c++17
   INCLUDES = -IF:\Projects\caoqingwa_Mini_Web\caoqingwa_MiniWeb\caoqingwa_MiniWeb\include
@@ -89,7 +97,7 @@ build CMakeFiles\server.dir\platform\win\select_loop.cpp.obj: CXX_COMPILER__serv
 #############################################
 # Link the executable server.exe
 
-build server.exe: CXX_EXECUTABLE_LINKER__server_Debug CMakeFiles\server.dir\src\http_conn.cpp.obj CMakeFiles\server.dir\src\main.cpp.obj CMakeFiles\server.dir\src\threadpool.cpp.obj CMakeFiles\server.dir\platform\win\select_loop.cpp.obj
+build server.exe: CXX_EXECUTABLE_LINKER__server_Debug CMakeFiles\server.dir\src\buffer.cpp.obj CMakeFiles\server.dir\src\http_conn.cpp.obj CMakeFiles\server.dir\src\main.cpp.obj CMakeFiles\server.dir\src\threadpool.cpp.obj CMakeFiles\server.dir\platform\win\select_loop.cpp.obj
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = ws2_32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib

@@ -16,8 +16,14 @@
   },
   "ActiveTargetSystem": "Local Machine",
   "ExpandedNodes": [
-    ""
+    "",
+    "\\include",
+    "\\out",
+    "\\platform",
+    "\\platform\\linux",
+    "\\platform\\win",
+    "\\src"
   ],
-  "SelectedNode": "\\F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\CMakeLists.txt\\server.exe\\F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\platform\\win\\select_loop.cpp",
+  "SelectedNode": "\\platform\\win",
   "PreviewInSolutionExplorer": true
 }

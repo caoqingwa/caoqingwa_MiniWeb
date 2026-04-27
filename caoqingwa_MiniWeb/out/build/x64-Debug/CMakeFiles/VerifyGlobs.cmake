@@ -15,6 +15,7 @@ endif()
 # CORE_SRC at CMakeLists.txt:15 (file)
 file(GLOB NEW_GLOB LIST_DIRECTORIES true "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/src/*.cpp")
 set(OLD_GLOB
+  "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/src/buffer.cpp"
   "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/src/http_conn.cpp"
   "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/src/main.cpp"
   "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/src/threadpool.cpp"
