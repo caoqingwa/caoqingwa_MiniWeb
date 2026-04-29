@@ -181,14 +181,10 @@ public:
 
                             std::ifstream file;
                             const std::string candidates[] = {
-                                std::string("src/") + relative_path,
+                                std::string("http/") + relative_path,
                                 relative_path,
-                                std::string("../src/") + relative_path,
-                                std::string("../../src/") + relative_path,
-                                std::string("../../../src/") + relative_path,
-                                std::string("../../../src/src/") + relative_path,
-                                std::string("../../../../src/") + relative_path,
-                                std::string("../../../../src/src/") + relative_path
+                                std::string("../http/") + relative_path,
+                                std::string("../../http/") + relative_path,
                             };
 
                             for (const auto& path : candidates) {

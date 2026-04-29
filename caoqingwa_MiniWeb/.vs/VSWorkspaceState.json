@@ -14,7 +14,7 @@
       "out\\install\\Linux-GCC-Debug"
     ]
   },
-  "ActiveTargetSystem": "Local Machine",
+  "ActiveTargetSystem": "192.168.169.129",
   "ExpandedNodes": [
     "",
     "\\include",
@@ -24,6 +24,6 @@
     "\\platform\\win",
     "\\src"
   ],
-  "SelectedNode": "\\platform\\win",
+  "SelectedNode": "\\CMakeLists.txt",
   "PreviewInSolutionExplorer": true
 }

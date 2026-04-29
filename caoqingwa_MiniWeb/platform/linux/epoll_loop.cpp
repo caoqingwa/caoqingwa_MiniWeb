@@ -14,6 +14,24 @@
 #include <cstring>
 #include <sys/socket.h>
 #include <cerrno>
+#include <climits>
+
+namespace {
+std::string get_executable_dir() {
+    char buffer[PATH_MAX]{};
+    const ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
+    if (len <= 0) {
+        return {};
+    }
+    buffer[len] = '\0';
+    std::string path(buffer);
+    const size_t pos = path.find_last_of('/');
+    if (pos == std::string::npos) {
+        return {};
+    }
+    return path.substr(0, pos);
+}
+}
 
 class EpollLoop : public EventLoop {
 private:
@@ -158,20 +176,23 @@ public:
                             }
 
                             std::string relative_path = request_path[0] == '/'
-                                ? request_path.substr(1)
-                                : request_path;
+                                ? request_path.substr(1): request_path;
 
                             std::ifstream file;
                             std::vector<std::string> candidates = {
-                                std::string("src/") + relative_path,
-                                relative_path,
-                                std::string("../src/") + relative_path,
-                                std::string("../../src/") + relative_path,
-                                std::string("../../../src/") + relative_path,
-                                std::string("../../../src/src/") + relative_path,
-                                std::string("../../../../src/") + relative_path,
-                                std::string("../../../../src/src/") + relative_path
+                                  std::string("http/") + relative_path,
+                                  relative_path,
+                                  std::string("../http/") + relative_path,
+                                  std::string("../../http/") + relative_path,
+                                  std::string("../../../http/") + relative_path
                             };
+
+                            const std::string executable_dir = get_executable_dir();
+                            if (!executable_dir.empty()) {
+                                candidates.insert(candidates.begin(), executable_dir + "/http/" + relative_path);
+                                candidates.insert(candidates.begin() + 1, executable_dir + "/" + relative_path);
+                            }
+
 
                             for (const auto& path : candidates) {
                                 file.open(path, std::ios::binary);
