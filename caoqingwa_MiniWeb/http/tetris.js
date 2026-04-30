@@ -8,7 +8,23 @@ const matrix = [
     [0, 1, 0],
 ];
 
+let score = 0;
+let lines = 0;
+let gameOver = false;
+
+const gameOverEl = document.getElementById('game-over');
+const finalScoreEl = document.getElementById('final-score');
+const restartBtn = document.getElementById('restart-btn');
+
+function updateScore() {
+    const scoreEl = document.getElementById('score');
+    const linesEl = document.getElementById('lines');
+    if (scoreEl) scoreEl.textContent = score;
+    if (linesEl) linesEl.textContent = lines;
+}
+
 function arenaSweep() {
+    let rowCount = 0;
     outer: for (let y = arena.length - 1; y > 0; --y) {
         for (let x = 0; x < arena[y].length; ++x) {
             if (arena[y][x] === 0) {
@@ -18,6 +34,13 @@ function arenaSweep() {
         const row = arena.splice(y, 1)[0].fill(0);
         arena.unshift(row);
         ++y;
+        rowCount++;
+    }
+    if (rowCount > 0) {
+        const pointsTable = {1: 40, 2: 100, 3: 300, 4: 1200};
+        score += (pointsTable[rowCount] || rowCount * 100);
+        lines += rowCount;
+        updateScore();
     }
 }
 
@@ -215,7 +238,9 @@ function playerReset() {
     player.pos.y = 0;
     player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
     if (collide(arena, player)) {
-        arena.forEach(row => row.fill(0));
+        gameOver = true;
+        if (finalScoreEl) finalScoreEl.textContent = score;
+        if (gameOverEl) gameOverEl.hidden = false;
     }
 }
 
@@ -252,6 +277,12 @@ let dropInterval = 1000;
 let lastTime = 0;
 
 function update(time = 0) {
+    if (gameOver) {
+        draw();
+        if (gameOverEl) gameOverEl.hidden = false;
+        return;
+    }
+
     const deltaTime = time - lastTime;
     lastTime = time;
     dropCounter += deltaTime;
@@ -280,9 +311,30 @@ const player = {
     matrix: null,
 };
 
+function restartGame() {
+    arena.forEach(row => row.fill(0));
+    score = 0;
+    lines = 0;
+    gameOver = false;
+    if (gameOverEl) gameOverEl.hidden = true;
+    updateScore();
+    playerReset();
+    lastTime = 0;
+    dropCounter = 0;
+    update();
+}
+
 playerReset();
+updateScore();
 
 document.addEventListener('keydown', event => {
+    if (gameOver) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            restartGame();
+        }
+        return;
+    }
+
     if (event.key === 'ArrowLeft') {
         playerMove(-1);
     } else if (event.key === 'ArrowRight') {
@@ -295,5 +347,9 @@ document.addEventListener('keydown', event => {
         playerRotate(1);
     }
 });
+
+if (restartBtn) {
+    restartBtn.addEventListener('click', restartGame);
+}
 
 update();

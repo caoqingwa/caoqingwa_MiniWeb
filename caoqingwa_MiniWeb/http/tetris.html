@@ -14,7 +14,20 @@
         Q：逆时针旋转<br>
         E：顺时针旋转
     </div>
-    <canvas id="tetris" width="240" height="400"></canvas>
+    <div id="status" style="margin-bottom:10px;">
+        <strong>分数：</strong> <span id="score">0</span>
+        &nbsp;&nbsp; <strong>消行：</strong> <span id="lines">0</span>
+    </div>
+    <div id="game-wrap">
+        <canvas id="tetris" width="240" height="400"></canvas>
+        <div id="game-over" hidden>
+            <div class="game-over-card">
+                <h2>游戏失败</h2>
+                <p>当前分数：<span id="final-score">0</span></p>
+                <button id="restart-btn" type="button">重新开始</button>
+            </div>
+        </div>
+    </div>
     <script src="tetris.js"></script>
 </body>
 </html>
