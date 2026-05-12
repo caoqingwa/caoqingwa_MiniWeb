@@ -15,6 +15,8 @@
 #include <sys/socket.h>
 #include <cerrno>
 #include <climits>
+#include <mutex>
+#include <algorithm>
 
 namespace {
 std::string get_executable_dir() {
@@ -31,6 +33,94 @@ std::string get_executable_dir() {
     }
     return path.substr(0, pos);
 }
+
+std::string to_lower(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) {
+        return static_cast<char>(std::tolower(c));
+    });
+    return s;
+}
+
+size_t parse_content_length(const std::string& header_block, bool& ok) {
+    ok = true;
+    std::istringstream stream(header_block);
+    std::string line;
+    if (!std::getline(stream, line)) {
+        ok = false;
+        return 0;
+    }
+
+    while (std::getline(stream, line)) {
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
+        if (line.empty()) {
+            continue;
+        }
+
+        const size_t colon = line.find(':');
+        if (colon == std::string::npos) {
+            continue;
+        }
+
+        const std::string key = to_lower(line.substr(0, colon));
+        if (key == "content-length") {
+            try {
+                return static_cast<size_t>(std::stoul(line.substr(colon + 1)));
+            }
+            catch (...) {
+                ok = false;
+                return 0;
+            }
+        }
+    }
+    return 0;
+}
+
+bool try_extract_request(const std::string& buffer, std::string& request_text, size_t& consumed) {
+    const size_t header_end = buffer.find("\r\n\r\n");
+    if (header_end == std::string::npos) {
+        return false;
+    }
+
+    bool length_ok = true;
+    const std::string header_block = buffer.substr(0, header_end);
+    size_t content_length = parse_content_length(header_block, length_ok);
+
+    size_t total = header_end + 4 + content_length;
+    if (!length_ok) {
+        total = header_end + 4;
+    }
+
+    if (buffer.size() < total) {
+        return false;
+    }
+
+    request_text = buffer.substr(0, total);
+    consumed = total;
+    return true;
+}
+
+bool write_all(int fd, const std::string& data) {
+    size_t total = 0;
+    while (total < data.size()) {
+        const ssize_t n = write(fd, data.data() + total, data.size() - total);
+        if (n < 0) {
+            if (errno == EINTR) {
+                continue;
+            }
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                continue;
+            }
+            return false;
+        }
+        if (n == 0) {
+            return false;
+        }
+        total += static_cast<size_t>(n);
+    }
+    return true;
+}
 }
 
 class EpollLoop : public EventLoop {
@@ -38,8 +128,23 @@ private:
     int server_fd{ -1 }, epfd{ -1 };
     ThreadPool thread_pool{ 4 };
     std::unordered_map<int, int> client_ids;
+    std::unordered_map<int, std::string> recv_buffers;
     int next_client_id{ 1 };
     std::vector<int> free_client_ids;
+    std::mutex state_mutex;
+
+    void close_client(int fd) {
+        std::lock_guard<std::mutex> lock(state_mutex);
+        auto it = client_ids.find(fd);
+        if (it != client_ids.end()) {
+            std::cout << "[client " << it->second << "] disconnected" << std::endl;
+            free_client_ids.push_back(it->second);
+            client_ids.erase(it);
+        }
+        recv_buffers.erase(fd);
+        epoll_ctl(epfd, EPOLL_CTL_DEL, fd, nullptr);
+        close(fd);
+    }
 
 public:
     ~EpollLoop() override {
@@ -107,55 +212,72 @@ public:
                         continue;
                     }
 
-                    if (client_ids.find(client) != client_ids.end()) {
-                        continue;
-                    }
+                    {
+                        std::lock_guard<std::mutex> lock(state_mutex);
+                        if (client_ids.find(client) != client_ids.end()) {
+                            continue;
+                        }
 
-                    epoll_event ev{};
-                    ev.data.fd = client;
-                    ev.events = EPOLLIN;
+                        epoll_event ev{};
+                        ev.data.fd = client;
+                        ev.events = EPOLLIN;
 
-                    epoll_ctl(epfd, EPOLL_CTL_ADD, client, &ev);
+                        epoll_ctl(epfd, EPOLL_CTL_ADD, client, &ev);
 
-                    int client_id;
-                    if (!free_client_ids.empty()) {
-                        client_id = free_client_ids.back();
-                        free_client_ids.pop_back();
+                        int client_id;
+                        if (!free_client_ids.empty()) {
+                            client_id = free_client_ids.back();
+                            free_client_ids.pop_back();
+                        }
+                        else {
+                            client_id = next_client_id++;
+                        }
+                        client_ids[client] = client_id;
+                        recv_buffers[client] = "";
+                        std::cout << "[client " << client_id << "] connected" << std::endl;
                     }
-                    else {
-                        client_id = next_client_id++;
-                    }
-                    client_ids[client] = client_id;
-                    std::cout << "[client " << client_id << "] connected" << std::endl;
                 }
                 else {
                     char buf[1024];
                     int len = read(fd, buf, sizeof(buf));
 
                     if (len <= 0) {
-                        auto it = client_ids.find(fd);
-                        if (it != client_ids.end()) {
-                            std::cout << "[client " << it->second << "] disconnected" << std::endl;
-                            free_client_ids.push_back(it->second);
-                            client_ids.erase(it);
+                        close_client(fd);
+                        continue;
+                    }
+
+                    {
+                        std::lock_guard<std::mutex> lock(state_mutex);
+                        auto it = recv_buffers.find(fd);
+                        if (it == recv_buffers.end()) {
+                            continue;
+                        }
+                        it->second.append(buf, buf + len);
+                    }
+
+                    while (true) {
+                        std::string request_text;
+                        size_t consumed = 0;
+                        {
+                            std::lock_guard<std::mutex> lock(state_mutex);
+                            auto it = recv_buffers.find(fd);
+                            if (it == recv_buffers.end()) {
+                                break;
+                            }
+                            if (!try_extract_request(it->second, request_text, consumed)) {
+                                break;
+                            }
+                            it->second.erase(0, consumed);
                         }
 
-                        epoll_ctl(epfd, EPOLL_CTL_DEL, fd, nullptr);
-                        close(fd);
-                    }
-                    else {
-                        auto it = client_ids.find(fd);
-                        int client_id = (it != client_ids.end()) ? it->second : -1;
+                        HttpConn http_conn;
+                        HttpRequest request;
+                        HttpParseResult parse_result = http_conn.parse_request(request_text, request);
+                        const bool keep_alive = (parse_result == HttpParseResult::Ok) ? request.keep_alive : false;
 
-                        std::string message(buf, buf + len);
-                        std::cout << "[client " << client_id << "] message: " << message << std::endl;
-
-                        thread_pool.enqueue([fd, message] {
-                            HttpConn http_conn;
-                            HttpRequest request;
-                            HttpParseResult parse_result = http_conn.parse_request(message, request);
-
+                        thread_pool.enqueue([this, fd, request, parse_result, keep_alive] {
                             std::string response;
+
                             if (parse_result != HttpParseResult::Ok) {
                                 const std::string body = "<h1>400 Bad Request</h1>";
                                 response =
@@ -166,7 +288,8 @@ public:
                                     "\r\n" +
                                     body;
 
-                                write(fd, response.c_str(), response.size());
+                                write_all(fd, response);
+                                close_client(fd);
                                 return;
                             }
 
@@ -176,7 +299,7 @@ public:
                             }
 
                             std::string relative_path = request_path[0] == '/'
-                                ? request_path.substr(1): request_path;
+                                ? request_path.substr(1) : request_path;
 
                             std::ifstream file;
                             std::vector<std::string> candidates = {
@@ -192,7 +315,6 @@ public:
                                 candidates.insert(candidates.begin(), executable_dir + "/http/" + relative_path);
                                 candidates.insert(candidates.begin() + 1, executable_dir + "/" + relative_path);
                             }
-
 
                             for (const auto& path : candidates) {
                                 file.open(path, std::ios::binary);
@@ -221,7 +343,7 @@ public:
                                 response =
                                     "HTTP/1.1 200 OK\r\n"
                                     "Content-Type: " + content_type + "\r\n"
-                                    "Connection: " + std::string(request.keep_alive ? "keep-alive" : "close") + "\r\n"
+                                    "Connection: " + std::string(keep_alive ? "keep-alive" : "close") + "\r\n"
                                     "Content-Length: " + std::to_string(body.size()) + "\r\n"
                                     "\r\n" +
                                     body;
@@ -231,14 +353,21 @@ public:
                                 response =
                                     "HTTP/1.1 404 Not Found\r\n"
                                     "Content-Type: text/html; charset=utf-8\r\n"
-                                    "Connection: " + std::string(request.keep_alive ? "keep-alive" : "close") + "\r\n"
+                                    "Connection: " + std::string(keep_alive ? "keep-alive" : "close") + "\r\n"
                                     "Content-Length: " + std::to_string(body.size()) + "\r\n"
                                     "\r\n" +
                                     body;
                             }
 
-                            write(fd, response.c_str(), response.size());
+                            write_all(fd, response);
+                            if (!keep_alive) {
+                                close_client(fd);
+                            }
                         });
+
+                        if (!keep_alive) {
+                            break;
+                        }
                     }
                 }
             }

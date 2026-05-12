@@ -14,7 +14,7 @@
       "out\\install\\Linux-GCC-Debug"
     ]
   },
-  "ActiveTargetSystem": "192.168.169.129",
+  "ActiveTargetSystem": "Local Machine",
   "ExpandedNodes": [
     "",
     "\\include",
@@ -24,6 +24,6 @@
     "\\platform\\win",
     "\\src"
   ],
-  "SelectedNode": "\\CMakeLists.txt",
+  "SelectedNode": "\\caoqingwa_MiniWeb.vcxproj",
   "PreviewInSolutionExplorer": true
 }

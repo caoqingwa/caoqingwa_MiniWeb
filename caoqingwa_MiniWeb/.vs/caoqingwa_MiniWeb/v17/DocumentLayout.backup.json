@@ -127,8 +127,7 @@
               "RelativeToolTip": "platform\\win\\select_loop.cpp",
               "ViewState": "AgIAAK4AAAAAAAAAAAAAALgAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-19T04:18:11.442Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-19T04:18:11.442Z"
             },
             {
               "$type": "Document",
@@ -138,7 +137,7 @@
               "RelativeDocumentMoniker": "platform\\linux\\epoll_loop.cpp",
               "ToolTip": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\platform\\linux\\epoll_loop.cpp",
               "RelativeToolTip": "platform\\linux\\epoll_loop.cpp",
-              "ViewState": "AgIAABQAAAAAAAAAAIA0wMIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-19T04:10:41.605Z",
               "EditorCaption": ""
@@ -153,8 +152,7 @@
               "RelativeToolTip": "include\\event_loop.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-19T04:12:01.13Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-19T04:12:01.13Z"
             },
             {
               "$type": "Document",
@@ -166,8 +164,7 @@
               "RelativeToolTip": "src\\threadpool.cpp",
               "ViewState": "AgIAAA8AAAAAAAAAAAAAABgAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-19T03:53:43.185Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-19T03:53:43.185Z"
             },
             {
               "$type": "Document",
@@ -179,8 +176,7 @@
               "RelativeToolTip": "include\\threadpool.h",
               "ViewState": "AgIAACEAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-19T03:53:48.252Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-19T03:53:48.252Z"
             },
             {
               "$type": "Document",
@@ -192,8 +188,7 @@
               "RelativeToolTip": "CMakeLists.txt",
               "ViewState": "AgIAABIAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2026-04-19T03:56:18.501Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-19T03:56:18.501Z"
             }
           ]
         }
