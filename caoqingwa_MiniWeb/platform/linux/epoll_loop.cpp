@@ -15,8 +15,10 @@
 #include <sys/socket.h>
 #include <cerrno>
 #include <climits>
+#include <chrono>
 #include <mutex>
 #include <algorithm>
+#include "timer.h"
 
 namespace {
 std::string get_executable_dir() {
@@ -132,6 +134,8 @@ private:
     int next_client_id{ 1 };
     std::vector<int> free_client_ids;
     std::mutex state_mutex;
+    TimerManager timer_manager;
+    const std::chrono::seconds idle_timeout{ 30 };
 
     void close_client(int fd) {
         std::lock_guard<std::mutex> lock(state_mutex);
@@ -142,6 +146,7 @@ private:
             client_ids.erase(it);
         }
         recv_buffers.erase(fd);
+        timer_manager.remove(fd);
         epoll_ctl(epfd, EPOLL_CTL_DEL, fd, nullptr);
         close(fd);
     }
@@ -199,8 +204,10 @@ public:
     void loop() override {
         epoll_event events[1024];
 
+        const int wait_timeout_ms = 1000;
+
         while (true) {
-            int n = epoll_wait(epfd, events, 1024, -1);
+            int n = epoll_wait(epfd, events, 1024, wait_timeout_ms);
 
             for (int i = 0; i < n; i++) {
                 int fd = events[i].data.fd;
@@ -234,6 +241,7 @@ public:
                         }
                         client_ids[client] = client_id;
                         recv_buffers[client] = "";
+                        timer_manager.touch(client);
                         std::cout << "[client " << client_id << "] connected" << std::endl;
                     }
                 }
@@ -253,6 +261,7 @@ public:
                             continue;
                         }
                         it->second.append(buf, buf + len);
+                        timer_manager.touch(fd);
                     }
 
                     while (true) {
@@ -339,6 +348,42 @@ public:
                                 else if (relative_path.size() >= 3 && relative_path.substr(relative_path.size() - 3) == ".js") {
                                     content_type = "application/javascript; charset=utf-8";
                                 }
+                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".png") {
+                                    content_type = "image/png";
+                                }
+                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".jpg") {
+                                    content_type = "image/jpeg";
+                                }
+                                else if (relative_path.size() >= 5 && relative_path.substr(relative_path.size() - 5) == ".jpeg") {
+                                    content_type = "image/jpeg";
+                                }
+                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".gif") {
+                                    content_type = "image/gif";
+                                }
+                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".svg") {
+                                    content_type = "image/svg+xml";
+                                }
+                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".ico") {
+                                    content_type = "image/x-icon";
+                                }
+                                else if (relative_path.size() >= 5 && relative_path.substr(relative_path.size() - 5) == ".webp") {
+                                    content_type = "image/webp";
+                                }
+                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".bmp") {
+                                    content_type = "image/bmp";
+                                }
+                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".ttf") {
+                                    content_type = "font/ttf";
+                                }
+                                else if (relative_path.size() >= 5 && relative_path.substr(relative_path.size() - 5) == ".woff") {
+                                    content_type = "font/woff";
+                                }
+                                else if (relative_path.size() >= 6 && relative_path.substr(relative_path.size() - 6) == ".woff2") {
+                                    content_type = "font/woff2";
+                                }
+                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".otf") {
+                                    content_type = "font/otf";
+                                }
 
                                 response =
                                     "HTTP/1.1 200 OK\r\n"
@@ -370,6 +415,11 @@ public:
                         }
                     }
                 }
+            }
+
+            const auto expired = timer_manager.get_expired(idle_timeout);
+            for (int fd : expired) {
+                close_client(fd);
             }
         }
     }
