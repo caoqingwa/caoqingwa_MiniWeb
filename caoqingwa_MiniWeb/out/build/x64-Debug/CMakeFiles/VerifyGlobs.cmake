@@ -17,8 +17,10 @@ file(GLOB NEW_GLOB LIST_DIRECTORIES true "F:/Projects/caoqingwa_Mini_Web/caoqing
 set(OLD_GLOB
   "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/src/buffer.cpp"
   "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/src/http_conn.cpp"
+  "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/src/http_handler.cpp"
   "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/src/main.cpp"
   "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/src/threadpool.cpp"
+  "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/src/timer.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")

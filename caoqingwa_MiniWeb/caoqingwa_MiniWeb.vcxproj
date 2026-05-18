@@ -134,10 +134,14 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\threadpool.cpp" />
     <ClCompile Include="src\http_conn.cpp" />
+    <ClCompile Include="src\http_handler.cpp" />
+    <ClCompile Include="src\buffer.cpp" />
     <ClCompile Include="platform\win\select_loop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\threadpool.h" />
+    <ClInclude Include="include\http_handler.h" />
+    <ClInclude Include="include\buffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

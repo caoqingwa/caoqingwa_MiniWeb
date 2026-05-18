@@ -1,12 +1,10 @@
 ﻿#include "event_loop.h"
-#include "http_conn.h"
+#include "http_handler.h"
 #include "threadpool.h"
 #include <sys/epoll.h>
 #include <arpa/inet.h>
 #include <iostream>
 #include <unistd.h>
-#include <fstream>
-#include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -19,6 +17,7 @@
 #include <mutex>
 #include <algorithm>
 #include "timer.h"
+#include "buffer.h"
 
 namespace {
 std::string get_executable_dir() {
@@ -130,7 +129,7 @@ private:
     int server_fd{ -1 }, epfd{ -1 };
     ThreadPool thread_pool{ 4 };
     std::unordered_map<int, int> client_ids;
-    std::unordered_map<int, std::string> recv_buffers;
+    std::unordered_map<int, Buffer> recv_buffers;
     int next_client_id{ 1 };
     std::vector<int> free_client_ids;
     std::mutex state_mutex;
@@ -240,7 +239,7 @@ public:
                             client_id = next_client_id++;
                         }
                         client_ids[client] = client_id;
-                        recv_buffers[client] = "";
+                        recv_buffers.emplace(client, Buffer{});
                         timer_manager.touch(client);
                         std::cout << "[client " << client_id << "] connected" << std::endl;
                     }
@@ -260,7 +259,7 @@ public:
                         if (it == recv_buffers.end()) {
                             continue;
                         }
-                        it->second.append(buf, buf + len);
+                        it->second.append(buf, static_cast<size_t>(len));
                         timer_manager.touch(fd);
                     }
 
@@ -273,10 +272,11 @@ public:
                             if (it == recv_buffers.end()) {
                                 break;
                             }
-                            if (!try_extract_request(it->second, request_text, consumed)) {
+                            const std::string pending_snapshot(it->second.peek(), it->second.readable_bytes());
+                            if (!try_extract_request(pending_snapshot, request_text, consumed)) {
                                 break;
                             }
-                            it->second.erase(0, consumed);
+                            it->second.retrieve(consumed);
                         }
 
                         HttpConn http_conn;
@@ -285,125 +285,30 @@ public:
                         const bool keep_alive = (parse_result == HttpParseResult::Ok) ? request.keep_alive : false;
 
                         thread_pool.enqueue([this, fd, request, parse_result, keep_alive] {
-                            std::string response;
+                            HttpHandler handler;
 
                             if (parse_result != HttpParseResult::Ok) {
-                                const std::string body = "<h1>400 Bad Request</h1>";
-                                response =
-                                    "HTTP/1.1 400 Bad Request\r\n"
-                                    "Content-Type: text/html; charset=utf-8\r\n"
-                                    "Connection: close\r\n"
-                                    "Content-Length: " + std::to_string(body.size()) + "\r\n"
-                                    "\r\n" +
-                                    body;
-
+                                std::string response = handler.build_bad_request_response();
                                 write_all(fd, response);
                                 close_client(fd);
                                 return;
                             }
 
-                            std::string request_path = request.path;
-                            if (request_path.empty() || request_path == "/") {
-                                request_path = "/tetris.html";
-                            }
-
-                            std::string relative_path = request_path[0] == '/'
-                                ? request_path.substr(1) : request_path;
-
-                            std::ifstream file;
-                            std::vector<std::string> candidates = {
-                                  std::string("http/") + relative_path,
-                                  relative_path,
-                                  std::string("../http/") + relative_path,
-                                  std::string("../../http/") + relative_path,
-                                  std::string("../../../http/") + relative_path
+                            std::vector<std::string> roots = {
+                                "http",
+                                "",
+                                "../http",
+                                "../../http",
+                                "../../../http"
                             };
 
                             const std::string executable_dir = get_executable_dir();
                             if (!executable_dir.empty()) {
-                                candidates.insert(candidates.begin(), executable_dir + "/http/" + relative_path);
-                                candidates.insert(candidates.begin() + 1, executable_dir + "/" + relative_path);
+                                roots.insert(roots.begin(), executable_dir + "/http");
+                                roots.insert(roots.begin() + 1, executable_dir);
                             }
 
-                            for (const auto& path : candidates) {
-                                file.open(path, std::ios::binary);
-                                if (file.is_open()) {
-                                    break;
-                                }
-                                file.clear();
-                            }
-
-                            if (file.is_open()) {
-                                std::ostringstream body_stream;
-                                body_stream << file.rdbuf();
-                                std::string body = body_stream.str();
-
-                                std::string content_type = "text/plain; charset=utf-8";
-                                if (relative_path.size() >= 5 && relative_path.substr(relative_path.size() - 5) == ".html") {
-                                    content_type = "text/html; charset=utf-8";
-                                }
-                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".css") {
-                                    content_type = "text/css; charset=utf-8";
-                                }
-                                else if (relative_path.size() >= 3 && relative_path.substr(relative_path.size() - 3) == ".js") {
-                                    content_type = "application/javascript; charset=utf-8";
-                                }
-                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".png") {
-                                    content_type = "image/png";
-                                }
-                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".jpg") {
-                                    content_type = "image/jpeg";
-                                }
-                                else if (relative_path.size() >= 5 && relative_path.substr(relative_path.size() - 5) == ".jpeg") {
-                                    content_type = "image/jpeg";
-                                }
-                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".gif") {
-                                    content_type = "image/gif";
-                                }
-                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".svg") {
-                                    content_type = "image/svg+xml";
-                                }
-                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".ico") {
-                                    content_type = "image/x-icon";
-                                }
-                                else if (relative_path.size() >= 5 && relative_path.substr(relative_path.size() - 5) == ".webp") {
-                                    content_type = "image/webp";
-                                }
-                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".bmp") {
-                                    content_type = "image/bmp";
-                                }
-                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".ttf") {
-                                    content_type = "font/ttf";
-                                }
-                                else if (relative_path.size() >= 5 && relative_path.substr(relative_path.size() - 5) == ".woff") {
-                                    content_type = "font/woff";
-                                }
-                                else if (relative_path.size() >= 6 && relative_path.substr(relative_path.size() - 6) == ".woff2") {
-                                    content_type = "font/woff2";
-                                }
-                                else if (relative_path.size() >= 4 && relative_path.substr(relative_path.size() - 4) == ".otf") {
-                                    content_type = "font/otf";
-                                }
-
-                                response =
-                                    "HTTP/1.1 200 OK\r\n"
-                                    "Content-Type: " + content_type + "\r\n"
-                                    "Connection: " + std::string(keep_alive ? "keep-alive" : "close") + "\r\n"
-                                    "Content-Length: " + std::to_string(body.size()) + "\r\n"
-                                    "\r\n" +
-                                    body;
-                            }
-                            else {
-                                const std::string body = "<h1>404 Not Found</h1>";
-                                response =
-                                    "HTTP/1.1 404 Not Found\r\n"
-                                    "Content-Type: text/html; charset=utf-8\r\n"
-                                    "Connection: " + std::string(keep_alive ? "keep-alive" : "close") + "\r\n"
-                                    "Content-Length: " + std::to_string(body.size()) + "\r\n"
-                                    "\r\n" +
-                                    body;
-                            }
-
+                            std::string response = handler.build_response(request, roots);
                             write_all(fd, response);
                             if (!keep_alive) {
                                 close_client(fd);

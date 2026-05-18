@@ -18,7 +18,10 @@ file(GLOB CORE_SRC CONFIGURE_DEPENDS
 add_executable(server
     ${CORE_SRC}
     ${PLATFORM_SRC}
- "include/buffer.h" "src/buffer.cpp")
+    "include/buffer.h"
+    "src/buffer.cpp"
+    "include/http_handler.h"
+    "src/http_handler.cpp")
 
 target_include_directories(server PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"

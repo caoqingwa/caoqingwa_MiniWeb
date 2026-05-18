@@ -17,6 +17,7 @@
   "ActiveTargetSystem": "Local Machine",
   "ExpandedNodes": [
     "",
+    "\\http",
     "\\include",
     "\\out",
     "\\platform",
