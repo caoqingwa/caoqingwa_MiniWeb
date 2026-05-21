@@ -12,6 +12,30 @@
 #include "buffer.h"
 #pragma comment(lib, "ws2_32.lib")
 
+namespace {
+bool write_all(SOCKET sock, const std::string& data) {
+    size_t total = 0;
+    while (total < data.size()) {
+        int sent = send(sock, data.data() + total, static_cast<int>(data.size() - total), 0);
+        if (sent == SOCKET_ERROR) {
+            const int err = WSAGetLastError();
+            if (err == WSAEINTR) {
+                continue;
+            }
+            if (err == WSAEWOULDBLOCK) {
+                continue;
+            }
+            return false;
+        }
+        if (sent == 0) {
+            return false;
+        }
+        total += static_cast<size_t>(sent);
+    }
+    return true;
+}
+}
+
 class SelectLoop : public EventLoop {
 private:
     SOCKET server_fd{ INVALID_SOCKET };
@@ -173,7 +197,7 @@ public:
                                 if (client_ids.find(sock) == client_ids.end()) {
                                     continue;
                                 }
-                                send(sock, response.c_str(), static_cast<int>(response.size()), 0);
+                                write_all(sock, response);
                             }
                             close_client(sock);
                             continue;
@@ -205,7 +229,7 @@ public:
                                 if (client_ids.find(sock) == client_ids.end()) {
                                     return;
                                 }
-                                send(sock, response.c_str(), static_cast<int>(response.size()), 0);
+                                write_all(sock, response);
                             }
                         });
                     }

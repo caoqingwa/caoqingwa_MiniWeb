@@ -1,3 +1,5 @@
 *.ipch
 /.vs
 /caoqingwa_MiniWeb/.vs
+/caoqingwa_MiniWeb/.agents
+/caoqingwa_MiniWeb/.claude
