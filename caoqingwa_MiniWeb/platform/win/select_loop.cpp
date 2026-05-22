@@ -7,6 +7,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <stack>
 #include <mutex>
 #include "threadpool.h"
 #include "buffer.h"
@@ -44,15 +45,18 @@ private:
     std::unordered_map<SOCKET, int> client_ids;
     std::unordered_map<SOCKET, Buffer> recv_buffers;
     int next_client_id{ 1 };
-    std::vector<int> free_client_ids;
+    std::stack<int> free_client_ids;
     std::mutex state_mutex;
+    std::mutex socket_mutex;
 
     void close_client(SOCKET sock) {
-        std::lock_guard<std::mutex> lock(state_mutex);
+        std::lock(state_mutex, socket_mutex);
+        std::lock_guard<std::mutex> state_lock(state_mutex, std::adopt_lock);
+        std::lock_guard<std::mutex> socket_lock(socket_mutex, std::adopt_lock);
         auto it = client_ids.find(sock);
         if (it != client_ids.end()) {
             std::cout << "[client " << it->second << "] disconnected" << std::endl;
-            free_client_ids.push_back(it->second);
+            free_client_ids.push(it->second);
             client_ids.erase(it);
         }
 
@@ -138,8 +142,8 @@ public:
                     {
                         std::lock_guard<std::mutex> lock(state_mutex);
                         if (!free_client_ids.empty()) {
-                            client_id = free_client_ids.back();
-                            free_client_ids.pop_back();
+                            client_id = free_client_ids.top();
+                            free_client_ids.pop();
                         }
                         else {
                             client_id = next_client_id++;
@@ -193,7 +197,9 @@ public:
                             HttpHandler handler;
                             std::string response = handler.build_bad_request_response();
                             {
-                                std::lock_guard<std::mutex> lock(state_mutex);
+                                std::lock(state_mutex, socket_mutex);
+                                std::lock_guard<std::mutex> state_lock(state_mutex, std::adopt_lock);
+                                std::lock_guard<std::mutex> socket_lock(socket_mutex, std::adopt_lock);
                                 if (client_ids.find(sock) == client_ids.end()) {
                                     continue;
                                 }
@@ -225,7 +231,9 @@ public:
                             std::string response = handler.build_response(request, roots);
 
                             {
-                                std::lock_guard<std::mutex> lock(state_mutex);
+                                std::lock(state_mutex, socket_mutex);
+                                std::lock_guard<std::mutex> state_lock(state_mutex, std::adopt_lock);
+                                std::lock_guard<std::mutex> socket_lock(socket_mutex, std::adopt_lock);
                                 if (client_ids.find(sock) == client_ids.end()) {
                                     return;
                                 }

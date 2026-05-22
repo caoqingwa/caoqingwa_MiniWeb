@@ -26,6 +26,6 @@ ThreadPool::~ThreadPool() {
     }
     condition.notify_all();
     for (std::thread& worker : workers) {
-        worker.join();//join阻塞
+        worker.join();//join 
     }
 }

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <string>
+#include <stack>
 #include <unordered_map>
 #include <vector>
 #include <stdexcept>
@@ -38,7 +39,7 @@ std::string get_executable_dir() {
 std::string to_lower(std::string s) {
     std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) {
         return static_cast<char>(std::tolower(c));
-    });
+        });
     return s;
 }
 
@@ -131,7 +132,7 @@ private:
     std::unordered_map<int, int> client_ids;
     std::unordered_map<int, Buffer> recv_buffers;
     int next_client_id{ 1 };
-    std::vector<int> free_client_ids;
+    std::stack<int> free_client_ids;
     std::mutex state_mutex;
     TimerManager timer_manager;
     const std::chrono::seconds idle_timeout{ 30 };
@@ -141,7 +142,7 @@ private:
         auto it = client_ids.find(fd);
         if (it != client_ids.end()) {
             std::cout << "[client " << it->second << "] disconnected" << std::endl;
-            free_client_ids.push_back(it->second);
+            free_client_ids.push(it->second);
             client_ids.erase(it);
         }
         recv_buffers.erase(fd);
@@ -232,8 +233,8 @@ public:
 
                         int client_id;
                         if (!free_client_ids.empty()) {
-                            client_id = free_client_ids.back();
-                            free_client_ids.pop_back();
+                            client_id = free_client_ids.top();
+                            free_client_ids.pop();
                         }
                         else {
                             client_id = next_client_id++;
