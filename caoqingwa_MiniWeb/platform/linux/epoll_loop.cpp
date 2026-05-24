@@ -17,6 +17,8 @@
 #include <chrono>
 #include <mutex>
 #include <algorithm>
+#include <sstream>
+#include <fcntl.h>
 #include "timer.h"
 #include "buffer.h"
 
@@ -123,6 +125,17 @@ bool write_all(int fd, const std::string& data) {
     }
     return true;
 }
+
+bool set_nonblocking(int fd) {
+    int flags = fcntl(fd, F_GETFL, 0);
+    if (flags < 0) {
+        return false;
+    }
+    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) {
+        return false;
+    }
+    return true;
+}
 }
 
 class EpollLoop : public EventLoop {
@@ -134,21 +147,43 @@ private:
     int next_client_id{ 1 };
     std::stack<int> free_client_ids;
     std::mutex state_mutex;
+    std::mutex socket_mutex;
+    std::mutex close_queue_mutex;
+    std::vector<int> pending_closes;
     TimerManager timer_manager;
     const std::chrono::seconds idle_timeout{ 30 };
 
     void close_client(int fd) {
-        std::lock_guard<std::mutex> lock(state_mutex);
+        std::lock(state_mutex, socket_mutex);
+        std::lock_guard<std::mutex> state_lock(state_mutex, std::adopt_lock);
+        std::lock_guard<std::mutex> socket_lock(socket_mutex, std::adopt_lock);
         auto it = client_ids.find(fd);
-        if (it != client_ids.end()) {
-            std::cout << "[client " << it->second << "] disconnected" << std::endl;
-            free_client_ids.push(it->second);
-            client_ids.erase(it);
+        if (it == client_ids.end()) {
+            return;
         }
+        std::cout << "[client " << it->second << "] disconnected" << std::endl;
+        free_client_ids.push(it->second);
+        client_ids.erase(it);
         recv_buffers.erase(fd);
         timer_manager.remove(fd);
         epoll_ctl(epfd, EPOLL_CTL_DEL, fd, nullptr);
         close(fd);
+    }
+
+    void request_close(int fd) {
+        std::lock_guard<std::mutex> lock(close_queue_mutex);
+        pending_closes.push_back(fd);
+    }
+
+    void drain_closes() {
+        std::vector<int> to_close;
+        {
+            std::lock_guard<std::mutex> lock(close_queue_mutex);
+            to_close.swap(pending_closes);
+        }
+        for (int fd : to_close) {
+            close_client(fd);
+        }
     }
 
 public:
@@ -167,6 +202,10 @@ public:
         server_fd = socket(AF_INET, SOCK_STREAM, 0);
         if (server_fd < 0) {
             throw std::runtime_error(std::string("socket failed: ") + std::strerror(errno));
+        }
+
+        if (!set_nonblocking(server_fd)) {
+            throw std::runtime_error(std::string("set_nonblocking failed: ") + std::strerror(errno));
         }
 
         int opt = 1;
@@ -194,7 +233,7 @@ public:
 
         epoll_event ev{};
         ev.data.fd = server_fd;
-        ev.events = EPOLLIN;
+        ev.events = EPOLLIN | EPOLLRDHUP | EPOLLERR;
 
         if (epoll_ctl(epfd, EPOLL_CTL_ADD, server_fd, &ev) < 0) {
             throw std::runtime_error(std::string("epoll_ctl ADD server_fd failed: ") + std::strerror(errno));
@@ -213,41 +252,64 @@ public:
                 int fd = events[i].data.fd;
 
                 if (fd == server_fd) {
-                    int client = accept(server_fd, nullptr, nullptr);
+                    while (true) {
+                        int client = accept(server_fd, nullptr, nullptr);
 
-                    if (client < 0) {
-                        continue;
-                    }
+                        if (client < 0) {
+                            if (errno == EINTR) {
+                                continue;
+                            }
+                            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                                break;
+                            }
+                            break;
+                        }
 
-                    {
-                        std::lock_guard<std::mutex> lock(state_mutex);
-                        if (client_ids.find(client) != client_ids.end()) {
+                        if (!set_nonblocking(client)) {
+                            close(client);
                             continue;
                         }
 
-                        epoll_event ev{};
-                        ev.data.fd = client;
-                        ev.events = EPOLLIN;
+                        {
+                            std::lock_guard<std::mutex> lock(state_mutex);
+                            if (client_ids.find(client) != client_ids.end()) {
+                                close(client);
+                                continue;
+                            }
 
-                        epoll_ctl(epfd, EPOLL_CTL_ADD, client, &ev);
+                            epoll_event ev{};
+                            ev.data.fd = client;
+                            ev.events = EPOLLIN | EPOLLRDHUP | EPOLLERR;
 
-                        int client_id;
-                        if (!free_client_ids.empty()) {
-                            client_id = free_client_ids.top();
-                            free_client_ids.pop();
+                            epoll_ctl(epfd, EPOLL_CTL_ADD, client, &ev);
+
+                            int client_id;
+                            if (!free_client_ids.empty()) {
+                                client_id = free_client_ids.top();
+                                free_client_ids.pop();
+                            }
+                            else {
+                                client_id = next_client_id++;
+                            }
+                            client_ids[client] = client_id;
+                            recv_buffers.emplace(client, Buffer{});
+                            timer_manager.touch(client);
+                            std::cout << "[client " << client_id << "] connected" << std::endl;
                         }
-                        else {
-                            client_id = next_client_id++;
-                        }
-                        client_ids[client] = client_id;
-                        recv_buffers.emplace(client, Buffer{});
-                        timer_manager.touch(client);
-                        std::cout << "[client " << client_id << "] connected" << std::endl;
                     }
                 }
                 else {
+                    if (events[i].events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) {
+                        close_client(fd);
+                        continue;
+                    }
+
                     char buf[1024];
                     int len = read(fd, buf, sizeof(buf));
+
+                    if (len < 0 && (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)) {
+                        continue;
+                    }
 
                     if (len <= 0) {
                         close_client(fd);
@@ -290,8 +352,11 @@ public:
 
                             if (parse_result != HttpParseResult::Ok) {
                                 std::string response = handler.build_bad_request_response();
-                                write_all(fd, response);
-                                close_client(fd);
+                                {
+                                    std::lock_guard<std::mutex> socket_lock(socket_mutex);
+                                    write_all(fd, response);
+                                }
+                                request_close(fd);
                                 return;
                             }
 
@@ -310,9 +375,12 @@ public:
                             }
 
                             std::string response = handler.build_response(request, roots);
-                            write_all(fd, response);
+                            {
+                                std::lock_guard<std::mutex> socket_lock(socket_mutex);
+                                write_all(fd, response);
+                            }
                             if (!keep_alive) {
-                                close_client(fd);
+                                request_close(fd);
                             }
                         });
 
@@ -323,6 +391,7 @@ public:
                 }
             }
 
+            drain_closes();
             const auto expired = timer_manager.get_expired(idle_timeout);
             for (int fd : expired) {
                 close_client(fd);

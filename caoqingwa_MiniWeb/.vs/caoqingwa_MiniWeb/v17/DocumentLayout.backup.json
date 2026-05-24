@@ -111,8 +111,7 @@
               "RelativeToolTip": "src\\http_handler.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-05-17T11:47:41.374Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-17T11:47:41.374Z"
             },
             {
               "$type": "Document",
@@ -124,8 +123,7 @@
               "RelativeToolTip": "include\\http_handler.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-05-17T11:47:31.151Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-17T11:47:31.151Z"
             },
             {
               "$type": "Document",
@@ -161,8 +159,7 @@
               "RelativeToolTip": "src\\buffer.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-27T14:44:49.267Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-27T14:44:49.267Z"
             },
             {
               "$type": "Document",
@@ -174,8 +171,7 @@
               "RelativeToolTip": "include\\buffer.h",
               "ViewState": "AgIAAA8AAAAAAAAAAAAAACcAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-27T14:44:37.372Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-27T14:44:37.372Z"
             },
             {
               "$type": "Document",
@@ -187,8 +183,7 @@
               "RelativeToolTip": "src\\http_conn.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAG8AAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-26T05:40:00.536Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-26T05:40:00.536Z"
             },
             {
               "$type": "Document",
@@ -200,8 +195,7 @@
               "RelativeToolTip": "include\\http_conn.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-26T05:39:13.043Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-26T05:39:13.043Z"
             },
             {
               "$type": "Document",
@@ -213,8 +207,7 @@
               "RelativeToolTip": "platform\\win\\select_loop.cpp",
               "ViewState": "AgIAAMIAAAAAAAAAAAAAANsAAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-19T04:18:11.442Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-19T04:18:11.442Z"
             },
             {
               "$type": "Document",
@@ -224,7 +217,7 @@
               "RelativeDocumentMoniker": "platform\\linux\\epoll_loop.cpp",
               "ToolTip": "F:\\Projects\\caoqingwa_Mini_Web\\caoqingwa_MiniWeb\\caoqingwa_MiniWeb\\platform\\linux\\epoll_loop.cpp",
               "RelativeToolTip": "platform\\linux\\epoll_loop.cpp",
-              "ViewState": "AgIAACIAAAAAAAAAAAAAACsAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAHABAAAAAAAAAAAAALIAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-19T04:10:41.605Z",
               "EditorCaption": ""
@@ -239,8 +232,7 @@
               "RelativeToolTip": "include\\event_loop.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-19T04:12:01.13Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-19T04:12:01.13Z"
             },
             {
               "$type": "Document",
@@ -252,8 +244,7 @@
               "RelativeToolTip": "src\\threadpool.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-19T03:53:43.185Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-19T03:53:43.185Z"
             },
             {
               "$type": "Document",
@@ -265,8 +256,7 @@
               "RelativeToolTip": "include\\threadpool.h",
               "ViewState": "AgIAAB4AAAAAAAAAAEBRwCMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-19T03:53:48.252Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-19T03:53:48.252Z"
             },
             {
               "$type": "Document",
