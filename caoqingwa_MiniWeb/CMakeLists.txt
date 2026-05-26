@@ -30,3 +30,22 @@ target_include_directories(server PRIVATE
 if(WIN32)
     target_link_libraries(server PRIVATE ws2_32)
 endif()
+
+if(MSVC AND WIN32)
+    get_filename_component(_link_dir "${CMAKE_LINKER}" DIRECTORY)
+    get_filename_component(_link_dir "${_link_dir}" DIRECTORY)
+    get_filename_component(_link_dir "${_link_dir}" DIRECTORY)
+    get_filename_component(_vctools_root "${_link_dir}" DIRECTORY)
+
+    get_filename_component(_mt_dir "${CMAKE_MT}" DIRECTORY)
+    get_filename_component(_mt_dir "${_mt_dir}" DIRECTORY)
+    get_filename_component(_sdk_version "${_mt_dir}" NAME)
+    get_filename_component(_sdk_bin_root "${_mt_dir}" DIRECTORY)
+    get_filename_component(_sdk_root "${_sdk_bin_root}" DIRECTORY)
+
+    target_link_options(server PRIVATE
+        "/LIBPATH:${_vctools_root}/lib/x64"
+        "/LIBPATH:${_sdk_root}/lib/${_sdk_version}/um/x64"
+        "/LIBPATH:${_sdk_root}/lib/${_sdk_version}/ucrt/x64"
+    )
+endif()

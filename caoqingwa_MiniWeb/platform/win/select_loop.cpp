@@ -78,7 +78,7 @@ public:
         WSACleanup();
     }
 
-    void init(int port) override {
+	void init(int port) override {  // Initialize Winsock
         WSADATA wsa;
         if (WSAStartup(MAKEWORD(2, 2), &wsa)) {
             throw std::runtime_error("WSAStartup failed");
@@ -174,7 +174,6 @@ public:
                         std::string chunk(buf, buf + len);
                         std::cout << "[client " << client_id << "] recv chunk: " << chunk << std::endl;
 
-                        std::string pending_snapshot;
                         {
                             std::lock_guard<std::mutex> lock(state_mutex);
                             auto it = recv_buffers.find(sock);
@@ -182,64 +181,84 @@ public:
                                 continue;
                             }
                             it->second.append(buf, static_cast<size_t>(len));
-                            pending_snapshot.assign(it->second.peek(), it->second.readable_bytes());
                         }
 
-                        HttpConn http_conn;
-                        HttpRequest request;
-                        HttpParseResult parse_result = http_conn.parse_request(pending_snapshot, request);
-
-                        if (parse_result == HttpParseResult::NeedMoreData) {
-                            continue;
-                        }
-
-                        if (parse_result == HttpParseResult::BadRequest) {
-                            HttpHandler handler;
-                            std::string response = handler.build_bad_request_response();
+                        while (true) {
+                            std::string pending_snapshot;
                             {
-                                std::lock(state_mutex, socket_mutex);
-                                std::lock_guard<std::mutex> state_lock(state_mutex, std::adopt_lock);
-                                std::lock_guard<std::mutex> socket_lock(socket_mutex, std::adopt_lock);
-                                if (client_ids.find(sock) == client_ids.end()) {
-                                    continue;
+                                std::lock_guard<std::mutex> lock(state_mutex);
+                                auto it = recv_buffers.find(sock);
+                                if (it == recv_buffers.end()) {
+                                    break;
                                 }
-                                write_all(sock, response);
+                                pending_snapshot.assign(it->second.peek(), it->second.readable_bytes());
                             }
-                            close_client(sock);
-                            continue;
-                        }
 
-                        {
-                            std::lock_guard<std::mutex> lock(state_mutex);
-                            auto it = recv_buffers.find(sock);
-                            if (it != recv_buffers.end()) {
-                                it->second.retrieve_all();
+                            HttpConn http_conn;
+                            HttpRequest request;
+                            size_t consumed = 0;
+                            HttpParseResult parse_result = http_conn.parse_request(pending_snapshot, request, consumed);
+
+                            if (parse_result == HttpParseResult::NeedMoreData) {
+                                break;
                             }
-                        }
 
-                        std::cout << "[client " << client_id << "] request: "
-                            << request.method << " " << request.path << std::endl;
-
-                        thread_pool.enqueue([this, sock, request] {
-                            HttpHandler handler;
-                            const std::vector<std::string> roots = {
-                                "http",
-                                "",
-                                "../http",
-                                "../../http",
-                            };
-                            std::string response = handler.build_response(request, roots);
+                            if (parse_result == HttpParseResult::BadRequest) {
+                                HttpHandler handler;
+                                std::string response = handler.build_bad_request_response();
+                                {
+                                    std::lock(state_mutex, socket_mutex);
+                                    std::lock_guard<std::mutex> state_lock(state_mutex, std::adopt_lock);
+                                    std::lock_guard<std::mutex> socket_lock(socket_mutex, std::adopt_lock);
+                                    if (client_ids.find(sock) == client_ids.end()) {
+                                        break;
+                                    }
+                                    write_all(sock, response);
+                                }
+                                close_client(sock);
+                                break;
+                            }
 
                             {
-                                std::lock(state_mutex, socket_mutex);
-                                std::lock_guard<std::mutex> state_lock(state_mutex, std::adopt_lock);
-                                std::lock_guard<std::mutex> socket_lock(socket_mutex, std::adopt_lock);
-                                if (client_ids.find(sock) == client_ids.end()) {
-                                    return;
+                                std::lock_guard<std::mutex> lock(state_mutex);
+                                auto it = recv_buffers.find(sock);
+                                if (it != recv_buffers.end()) {
+                                    it->second.retrieve(consumed);
                                 }
-                                write_all(sock, response);
                             }
-                        });
+
+                            std::cout << "[client " << client_id << "] request: "
+                                << request.method << " " << request.path << std::endl;
+
+                            const bool keep_alive = request.keep_alive;
+                            thread_pool.enqueue([this, sock, request, keep_alive] {
+                                HttpHandler handler;
+                                const std::vector<std::string> roots = {
+                                    "http",
+                                    "",
+                                    "../http",
+                                    "../../http",
+                                };
+                                std::string response = handler.build_response(request, roots);
+
+                                {
+                                    std::lock(state_mutex, socket_mutex);
+                                    std::lock_guard<std::mutex> state_lock(state_mutex, std::adopt_lock);
+                                    std::lock_guard<std::mutex> socket_lock(socket_mutex, std::adopt_lock);
+                                    if (client_ids.find(sock) == client_ids.end()) {
+                                        return;
+                                    }
+                                    write_all(sock, response);
+                                }
+                                if (!keep_alive) {
+                                    close_client(sock);
+                                }
+                            });
+
+                            if (!keep_alive) {
+                                break;
+                            }
+                        }
                     }
                 }
             }

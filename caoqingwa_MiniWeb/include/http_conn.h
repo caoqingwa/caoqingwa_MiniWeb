@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <string>
+#include <cstddef>
 #include <unordered_map>
 #include <algorithm>
 #include <cctype>
@@ -25,4 +26,5 @@ enum class HttpParseResult {
 class HttpConn {
 public:
     HttpParseResult parse_request(const std::string& raw, HttpRequest& request) const;
+    HttpParseResult parse_request(const std::string& raw, HttpRequest& request, size_t& consumed) const;
 };

@@ -25,6 +25,12 @@ std::string to_lower(std::string s) {
 }
 
 HttpParseResult HttpConn::parse_request(const std::string& raw, HttpRequest& request) const {
+    size_t consumed = 0;
+    return parse_request(raw, request, consumed);
+}
+
+HttpParseResult HttpConn::parse_request(const std::string& raw, HttpRequest& request, size_t& consumed) const {
+    consumed = 0;
     const size_t header_end = raw.find("\r\n\r\n");
     if (header_end == std::string::npos) {
         return HttpParseResult::NeedMoreData;
@@ -101,6 +107,7 @@ HttpParseResult HttpConn::parse_request(const std::string& raw, HttpRequest& req
     }
 
     request.body = raw.substr(body_begin, content_length);
+    consumed = body_begin + content_length;
 
     std::string connection = "";
     auto conn_it = request.headers.find("connection");
