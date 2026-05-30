@@ -327,24 +327,32 @@ public:
                     }
 
                     while (true) {
-                        std::string request_text;
-                        size_t consumed = 0;
+                        std::string pending_snapshot;
                         {
                             std::lock_guard<std::mutex> lock(state_mutex);
                             auto it = recv_buffers.find(fd);
                             if (it == recv_buffers.end()) {
                                 break;
                             }
-                            const std::string pending_snapshot(it->second.peek(), it->second.readable_bytes());
-                            if (!try_extract_request(pending_snapshot, request_text, consumed)) {
-                                break;
-                            }
-                            it->second.retrieve(consumed);
+                            pending_snapshot.assign(it->second.peek(), it->second.readable_bytes());
                         }
 
                         HttpConn http_conn;
                         HttpRequest request;
-                        HttpParseResult parse_result = http_conn.parse_request(request_text, request);
+                        size_t consumed = 0;
+                        HttpParseResult parse_result = http_conn.parse_request(pending_snapshot, request, consumed);
+                        if (parse_result == HttpParseResult::NeedMoreData) {
+                            break;
+                        }
+
+                        if (parse_result == HttpParseResult::Ok) {
+                            std::lock_guard<std::mutex> lock(state_mutex);
+                            auto it = recv_buffers.find(fd);
+                            if (it != recv_buffers.end()) {
+                                it->second.retrieve(consumed);
+                            }
+                        }
+
                         const bool keep_alive = (parse_result == HttpParseResult::Ok) ? request.keep_alive : false;
 
                         thread_pool.enqueue([this, fd, request, parse_result, keep_alive] {

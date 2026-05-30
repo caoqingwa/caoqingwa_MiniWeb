@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>俄罗斯方块</title>
     <link rel="stylesheet" href="tetris.css">
 </head>
@@ -26,6 +27,18 @@
                 <p>当前分数：<span id="final-score">0</span></p>
                 <button id="restart-btn" type="button">重新开始</button>
             </div>
+        </div>
+    </div>
+    <div id="touch-controls">
+        <div class="touch-row">
+            <button class="touch-btn" id="btn-rotate-ccw" type="button">⟲</button>
+            <span class="touch-btn placeholder"></span>
+            <button class="touch-btn" id="btn-rotate-cw" type="button">⟳</button>
+        </div>
+        <div class="touch-row">
+            <button class="touch-btn" id="btn-left" type="button">◀</button>
+            <button class="touch-btn" id="btn-down" type="button">▼</button>
+            <button class="touch-btn" id="btn-right" type="button">▶</button>
         </div>
     </div>
     <script src="tetris.js"></script>

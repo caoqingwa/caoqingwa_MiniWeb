@@ -1,5 +1,6 @@
 ﻿#include "http_handler.h"
 #include <algorithm>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 
@@ -27,6 +28,26 @@ std::string join_root(const std::string& root, const std::string& relative_path)
         return root + relative_path;
     }
     return root + "/" + relative_path;
+}
+
+std::string sanitize_relative_path(const std::string& relative_path) {
+    if (relative_path.empty()) {
+        return {};
+    }
+
+    std::filesystem::path path(relative_path);
+    path = path.lexically_normal();
+    if (path.empty() || path.is_absolute()) {
+        return {};
+    }
+
+    for (const auto& part : path) {
+        if (part == "..") {
+            return {};
+        }
+    }
+
+    return path.generic_string();
 }
 
 std::string get_content_type(const std::string& path) {
@@ -96,6 +117,17 @@ std::string HttpHandler::build_response(const HttpRequest& request,
     }
 
     std::string relative_path = request_path[0] == '/' ? request_path.substr(1) : request_path;
+    relative_path = sanitize_relative_path(relative_path);
+    if (relative_path.empty()) {
+        const std::string body = "<h1>404 Not Found</h1>";
+        return
+            "HTTP/1.1 404 Not Found\r\n"
+            "Content-Type: text/html; charset=utf-8\r\n"
+            "Connection: " + std::string(request.keep_alive ? "keep-alive" : "close") + "\r\n"
+            "Content-Length: " + std::to_string(body.size()) + "\r\n"
+            "\r\n" +
+            body;
+    }
 
     std::ifstream file;
     for (const auto& root : search_roots) {

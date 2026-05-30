@@ -1,6 +1,22 @@
 const canvas = document.getElementById('tetris');
 const context = canvas.getContext('2d');
-context.scale(20, 20);
+
+const COLS = 12;
+const ROWS = 20;
+let cellSize = 20;
+
+function resizeCanvas() {
+    const maxWidth = Math.min(window.innerWidth - 16, 300);
+    cellSize = Math.floor(maxWidth / COLS);
+    canvas.width = cellSize * COLS;
+    canvas.height = cellSize * ROWS;
+    canvas.style.width = canvas.width + 'px';
+    canvas.style.height = canvas.height + 'px';
+    context.setTransform(cellSize, 0, 0, cellSize, 0, 0);
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
 const matrix = [
     [0, 0, 0],
@@ -351,5 +367,55 @@ document.addEventListener('keydown', event => {
 if (restartBtn) {
     restartBtn.addEventListener('click', restartGame);
 }
+
+// 移动端触控按钮（带防抖）
+function bindTouchBtn(id, action, repeatDelay) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+
+    let holdTimer = null;
+    let lastFire = 0;
+    const cooldown = repeatDelay || 150;
+
+    function fireAction(e) {
+        const now = Date.now();
+        if (now - lastFire < cooldown) return;
+        lastFire = now;
+        action();
+    }
+
+    function startAction(e) {
+        e.preventDefault();
+        fireAction(e);
+        if (repeatDelay) {
+            holdTimer = setInterval(() => fireAction(e), repeatDelay);
+        }
+    }
+
+    function stopAction(e) {
+        e.preventDefault();
+        if (holdTimer) {
+            clearInterval(holdTimer);
+            holdTimer = null;
+        }
+    }
+
+    btn.addEventListener('touchstart', startAction, {passive: false});
+    btn.addEventListener('touchend', stopAction);
+    btn.addEventListener('touchcancel', stopAction);
+    btn.addEventListener('mousedown', startAction);
+    btn.addEventListener('mouseup', stopAction);
+    btn.addEventListener('mouseleave', stopAction);
+}
+
+bindTouchBtn('btn-left', () => playerMove(-1), 60);
+bindTouchBtn('btn-right', () => playerMove(1), 60);
+bindTouchBtn('btn-down', () => playerDrop(), 60);
+bindTouchBtn('btn-rotate-cw', () => playerRotate(1));
+bindTouchBtn('btn-rotate-ccw', () => playerRotate(-1));
+
+// 防止游戏区域内的触摸滚动
+canvas.addEventListener('touchstart', e => e.preventDefault(), {passive: false});
+canvas.addEventListener('touchmove', e => e.preventDefault(), {passive: false});
 
 update();

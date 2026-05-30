@@ -65,3 +65,70 @@ canvas {
 .game-over-card button:hover {
     background: #e7e7e7;
 }
+
+/* 移动端触控按钮区域 */
+#touch-controls {
+    display: none;
+    margin-top: 16px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.touch-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.touch-btn {
+    width: 56px;
+    height: 56px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.touch-btn:active {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.touch-btn.placeholder {
+    border-color: transparent;
+    background: transparent;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* 小屏幕显示触控按钮，大屏幕隐藏 */
+@media (max-width: 768px) {
+    #touch-controls {
+        display: block;
+    }
+
+    #game-wrap {
+        width: auto;
+        max-width: 100%;
+    }
+
+    canvas {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+/* 给大屏幕保留键盘提示 */
+@media (min-width: 769px) {
+    #touch-controls {
+        display: none;
+    }
+}
