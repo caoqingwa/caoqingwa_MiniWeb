@@ -3,3 +3,6 @@
 /caoqingwa_MiniWeb/.vs
 /caoqingwa_MiniWeb/.agents
 /caoqingwa_MiniWeb/.claude
+/caoqingwa_MiniWeb/.codegraph
+*.sln
+/x64

@@ -1,4 +1,5 @@
 ﻿#include "http_conn.h"
+#include <limits>
 
 
 namespace {
@@ -94,7 +95,11 @@ HttpParseResult HttpConn::parse_request(const std::string& raw, HttpRequest& req
     auto it = request.headers.find("content-length");
     if (it != request.headers.end()) {
         try {
-            content_length = static_cast<size_t>(std::stoul(it->second));
+            const unsigned long long parsed = std::stoull(it->second);
+            if (parsed > std::numeric_limits<size_t>::max()) {
+                return HttpParseResult::BadRequest;
+            }
+            content_length = static_cast<size_t>(parsed);
         }
         catch (...) {
             return HttpParseResult::BadRequest;
@@ -102,7 +107,7 @@ HttpParseResult HttpConn::parse_request(const std::string& raw, HttpRequest& req
     }
 
     const size_t body_begin = header_end + 4;
-    if (raw.size() < body_begin + content_length) {
+    if (raw.size() - body_begin < content_length) {
         return HttpParseResult::NeedMoreData;
     }
 

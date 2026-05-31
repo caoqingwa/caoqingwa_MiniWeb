@@ -23,11 +23,11 @@ events:
       
       The output was:
       0
-      用于 x64 的 Microsoft (R) C/C++ 优化编译器 19.44.35221 版
+      用于 x64 的 Microsoft (R) C/C++ 优化编译器 19.44.35227 版
       版权所有(C) Microsoft Corporation。保留所有权利。
       
       CMakeCCompilerId.c
-      Microsoft (R) Incremental Linker Version 14.44.35221.0
+      Microsoft (R) Incremental Linker Version 14.44.35227.0
       Copyright (C) Microsoft Corporation.  All rights reserved.
       
       /out:CMakeCCompilerId.exe 
@@ -69,11 +69,11 @@ events:
       
       The output was:
       0
-      用于 x64 的 Microsoft (R) C/C++ 优化编译器 19.44.35221 版
+      用于 x64 的 Microsoft (R) C/C++ 优化编译器 19.44.35227 版
       版权所有(C) Microsoft Corporation。保留所有权利。
       
       CMakeCXXCompilerId.cpp
-      Microsoft (R) Incremental Linker Version 14.44.35221.0
+      Microsoft (R) Incremental Linker Version 14.44.35227.0
       Copyright (C) Microsoft Corporation.  All rights reserved.
       
       /out:CMakeCXXCompilerId.exe 
@@ -109,8 +109,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-546ons"
-      binary: "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-546ons"
+      source: "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-utuavo"
+      binary: "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-utuavo"
     cmakeVariables:
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
       CMAKE_C_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
@@ -119,11 +119,11 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-546ons'
+        Change Dir: 'F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-utuavo'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe" -v cmTC_5c34f
-        [1/2] C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1444~1.352\\bin\\Hostx64\\x64\\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\\cmTC_5c34f.dir\\CMakeCCompilerABI.c.obj /FdCMakeFiles\\cmTC_5c34f.dir\\ /FS -c "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCCompilerABI.c"
-        [2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe" -E vs_link_exe --msvc-ver=1944 --intdir=CMakeFiles\\cmTC_5c34f.dir --rc="F:\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe" --mt="F:\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\mt.exe" --manifests  -- C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1444~1.352\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_5c34f.dir\\CMakeCCompilerABI.c.obj  /out:cmTC_5c34f.exe /implib:cmTC_5c34f.lib /pdb:cmTC_5c34f.pdb /version:0.0 /machine:x64  /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe" -v cmTC_59a0b
+        [1/2] C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1444~1.352\\bin\\Hostx64\\x64\\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\\cmTC_59a0b.dir\\CMakeCCompilerABI.c.obj /FdCMakeFiles\\cmTC_59a0b.dir\\ /FS -c "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCCompilerABI.c"
+        [2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe" -E vs_link_exe --msvc-ver=1944 --intdir=CMakeFiles\\cmTC_59a0b.dir --rc="F:\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe" --mt="F:\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\mt.exe" --manifests  -- C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1444~1.352\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_59a0b.dir\\CMakeCCompilerABI.c.obj  /out:cmTC_59a0b.exe /implib:cmTC_59a0b.lib /pdb:cmTC_59a0b.pdb /version:0.0 /machine:x64  /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
         
       exitCode: 0
   -
@@ -152,7 +152,7 @@ events:
       - "CMakeLists.txt:2 (project)"
     message: |
       Running the C compiler's linker: "C:/PROGRA~1/MIB055~1/2022/COMMUN~1/VC/Tools/MSVC/1444~1.352/bin/Hostx64/x64/link.exe" "-v"
-      Microsoft (R) Incremental Linker Version 14.44.35221.0
+      Microsoft (R) Incremental Linker Version 14.44.35227.0
       Copyright (C) Microsoft Corporation.  All rights reserved.
   -
     kind: "try_compile-v1"
@@ -163,8 +163,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-rykx0z"
-      binary: "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-rykx0z"
+      source: "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-d0gqiq"
+      binary: "F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-d0gqiq"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /W3 /GR /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
@@ -174,11 +174,11 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-rykx0z'
+        Change Dir: 'F:/Projects/caoqingwa_Mini_Web/caoqingwa_MiniWeb/caoqingwa_MiniWeb/out/build/x64-Debug/CMakeFiles/CMakeScratch/TryCompile-d0gqiq'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe" -v cmTC_2a2ed
-        [1/2] C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1444~1.352\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\\cmTC_2a2ed.dir\\CMakeCXXCompilerABI.cpp.obj /FdCMakeFiles\\cmTC_2a2ed.dir\\ /FS -c "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCXXCompilerABI.cpp"
-        [2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe" -E vs_link_exe --msvc-ver=1944 --intdir=CMakeFiles\\cmTC_2a2ed.dir --rc="F:\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe" --mt="F:\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\mt.exe" --manifests  -- C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1444~1.352\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_2a2ed.dir\\CMakeCXXCompilerABI.cpp.obj  /out:cmTC_2a2ed.exe /implib:cmTC_2a2ed.lib /pdb:cmTC_2a2ed.pdb /version:0.0 /machine:x64  /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe" -v cmTC_27d2a
+        [1/2] C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1444~1.352\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP   /DWIN32 /D_WINDOWS /W3 /GR /EHsc  /MDd /Zi /Ob0 /Od /RTC1 /showIncludes /FoCMakeFiles\\cmTC_27d2a.dir\\CMakeCXXCompilerABI.cpp.obj /FdCMakeFiles\\cmTC_27d2a.dir\\ /FS -c "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\share\\cmake-3.31\\Modules\\CMakeCXXCompilerABI.cpp"
+        [2/2] C:\\Windows\\system32\\cmd.exe /C "cd . && "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe" -E vs_link_exe --msvc-ver=1944 --intdir=CMakeFiles\\cmTC_27d2a.dir --rc="F:\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\rc.exe" --mt="F:\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\mt.exe" --manifests  -- C:\\PROGRA~1\\MIB055~1\\2022\\COMMUN~1\\VC\\Tools\\MSVC\\1444~1.352\\bin\\Hostx64\\x64\\link.exe /nologo CMakeFiles\\cmTC_27d2a.dir\\CMakeCXXCompilerABI.cpp.obj  /out:cmTC_27d2a.exe /implib:cmTC_27d2a.lib /pdb:cmTC_27d2a.pdb /version:0.0 /machine:x64  /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib && cd ."
         
       exitCode: 0
   -
@@ -207,6 +207,6 @@ events:
       - "CMakeLists.txt:2 (project)"
     message: |
       Running the CXX compiler's linker: "C:/PROGRA~1/MIB055~1/2022/COMMUN~1/VC/Tools/MSVC/1444~1.352/bin/Hostx64/x64/link.exe" "-v"
-      Microsoft (R) Incremental Linker Version 14.44.35221.0
+      Microsoft (R) Incremental Linker Version 14.44.35227.0
       Copyright (C) Microsoft Corporation.  All rights reserved.
 ...

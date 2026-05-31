@@ -1,8 +1,5 @@
 ﻿#include "http_handler.h"
-#include <algorithm>
-#include <filesystem>
-#include <fstream>
-#include <sstream>
+
 
 namespace {
 std::string to_lower(std::string s) {
@@ -35,19 +32,49 @@ std::string sanitize_relative_path(const std::string& relative_path) {
         return {};
     }
 
-    std::filesystem::path path(relative_path);
-    path = path.lexically_normal();
-    if (path.empty() || path.is_absolute()) {
+    if (relative_path[0] == '/' || relative_path[0] == '\\') {
         return {};
     }
 
-    for (const auto& part : path) {
-        if (part == "..") {
-            return {};
+    std::string normalized;
+    std::vector<std::string> parts;
+    std::string current;
+
+    auto flush_part = [&]() {
+        if (current.empty() || current == ".") {
+            current.clear();
+            return true;
         }
+        if (current == "..") {
+            return false;
+        }
+        parts.push_back(current);
+        current.clear();
+        return true;
+    };
+
+    for (char ch : relative_path) {
+        if (ch == '/' || ch == '\\') {
+            if (!flush_part()) {
+                return {};
+            }
+            continue;
+        }
+        current.push_back(ch);
     }
 
-    return path.generic_string();
+    if (!flush_part()) {
+        return {};
+    }
+
+    for (size_t i = 0; i < parts.size(); ++i) {
+        if (i > 0) {
+            normalized.push_back('/');
+        }
+        normalized.append(parts[i]);
+    }
+
+    return normalized;
 }
 
 std::string get_content_type(const std::string& path) {

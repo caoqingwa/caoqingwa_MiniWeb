@@ -22,14 +22,7 @@
   },
   "ActiveTargetSystem": "Local Machine",
   "ExpandedNodes": [
-    "",
-    "\\http",
-    "\\include",
-    "\\out",
-    "\\platform",
-    "\\platform\\linux",
-    "\\platform\\win",
-    "\\src"
+    ""
   ],
   "PreviewInSolutionExplorer": true
 }

@@ -1,6 +1,10 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <fstream>
+#include <sstream>
+#include <filesystem>
 #include "http_conn.h"
 
 class HttpHandler {
