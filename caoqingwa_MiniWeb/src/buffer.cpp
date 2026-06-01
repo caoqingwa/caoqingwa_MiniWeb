@@ -46,10 +46,11 @@ std::string Buffer::retrieve_all_to_str() {
     return str;
 }
 
-void Buffer::ensure_writable(size_t len) {
+bool Buffer::ensure_writable(size_t len) {
     if (writable_bytes() < len) {
-        make_space(len);
+        return make_space(len);
     }
+    return true;
 }
 
 char* Buffer::begin_write() {
@@ -64,22 +65,25 @@ void Buffer::has_written(size_t len) {
     write_pos_ += len;
 }
 
-void Buffer::append(const std::string& str) {
-    append(str.data(), str.size());
+bool Buffer::append(const std::string& str) {
+    return append(str.data(), str.size());
 }
 
-void Buffer::append(const char* data, size_t len) {
+bool Buffer::append(const char* data, size_t len) {
     if (data == nullptr || len == 0) {
-        return;
+        return true;
     }
 
-    ensure_writable(len);
+    if (!ensure_writable(len)) {
+        return false;
+    }
     std::memcpy(begin_write(), data, len);
     has_written(len);
+    return true;
 }
 
-void Buffer::append(const void* data, size_t len) {
-    append(static_cast<const char*>(data), len);
+bool Buffer::append(const void* data, size_t len) {
+    return append(static_cast<const char*>(data), len);
 }
 
 char* Buffer::begin() {
@@ -90,14 +94,18 @@ const char* Buffer::begin() const {
     return buffer_.data();
 }
 
-void Buffer::make_space(size_t len) {
+bool Buffer::make_space(size_t len) {
     if (writable_bytes() + prependable_bytes() < len) {
-        buffer_.resize(write_pos_ + len);
-        return;
+        const size_t new_size = write_pos_ + len;
+        if (new_size > kMaxSize) {
+            return false;
+        }
+        buffer_.resize(new_size);
+    } else {
+        const size_t readable = readable_bytes();
+        std::copy(begin() + read_pos_, begin() + write_pos_, begin());
+        read_pos_ = 0;
+        write_pos_ = readable;
     }
-
-    const size_t readable = readable_bytes();
-    std::copy(begin() + read_pos_, begin() + write_pos_, begin());
-    read_pos_ = 0;
-    write_pos_ = readable;
+    return true;
 }

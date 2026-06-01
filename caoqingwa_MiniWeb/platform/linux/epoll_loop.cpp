@@ -316,14 +316,26 @@ public:
                         continue;
                     }
 
+                    bool buffer_full = false;
                     {
                         std::lock_guard<std::mutex> lock(state_mutex);
                         auto it = recv_buffers.find(fd);
                         if (it == recv_buffers.end()) {
                             continue;
                         }
-                        it->second.append(buf, static_cast<size_t>(len));
-                        timer_manager.touch(fd);
+                        if (!it->second.append(buf, static_cast<size_t>(len))) {
+                            buffer_full = true;
+                        }
+                        else {
+                            timer_manager.touch(fd);
+                        }
+                    }
+                    if (buffer_full) {
+                        HttpHandler handler;
+                        std::string response = handler.build_payload_too_large_response();
+                        write_all(fd, response);
+                        request_close(fd);
+                        continue;
                     }
 
                     while (true) {

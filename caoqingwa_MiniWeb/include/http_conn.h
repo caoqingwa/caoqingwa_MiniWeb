@@ -25,6 +25,9 @@ enum class HttpParseResult {
 
 class HttpConn {
 public:
+    static constexpr size_t kMaxHeaderSize = 8192;
+    static constexpr size_t kMaxBodySize = 1024 * 1024;
+
     HttpParseResult parse_request(const std::string& raw, HttpRequest& request) const;
     HttpParseResult parse_request(const std::string& raw, HttpRequest& request, size_t& consumed) const;
 };

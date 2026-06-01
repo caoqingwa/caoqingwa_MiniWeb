@@ -2,11 +2,13 @@
 .vs/
 .agents/
 .claude/
-.codegraph/
+caoqingwa_MiniWeb/.codegraph/
 skills-lock.json
 Debug/
+Release/
 x64/
 out/
 caoqingw.8b4cf509/
 *.vcxproj.user
+CMakeSettings.json
 *.sln

@@ -21,21 +21,22 @@ public:
     void retrieve_all();
     std::string retrieve_all_to_str();
 
-    void ensure_writable(size_t len);
+    static constexpr size_t kMaxSize = 2 * 1024 * 1024;
+
+    bool ensure_writable(size_t len);
     char* begin_write();
     const char* begin_write_const() const;
     void has_written(size_t len);
 
-    void append(const std::string& str);
-    void append(const char* data, size_t len);
-    void append(const void* data, size_t len);
+    bool append(const std::string& str);
+    bool append(const char* data, size_t len);
+    bool append(const void* data, size_t len);
 
 private:
     char* begin();
     const char* begin() const;
-    void make_space(size_t len);
+    bool make_space(size_t len);
 
-private:
     static const size_t k_initial_size = 1024;
     std::vector<char> buffer_;
     size_t read_pos_;

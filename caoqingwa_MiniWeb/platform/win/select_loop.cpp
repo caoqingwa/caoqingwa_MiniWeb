@@ -174,13 +174,24 @@ public:
                         std::string chunk(buf, buf + len);
                         std::cout << "[client " << client_id << "] recv chunk: " << chunk << std::endl;
 
+                        bool buffer_full = false;
                         {
                             std::lock_guard<std::mutex> lock(state_mutex);
                             auto it = recv_buffers.find(sock);
                             if (it == recv_buffers.end()) {
                                 continue;
                             }
-                            it->second.append(buf, static_cast<size_t>(len));
+                            if (!it->second.append(buf, static_cast<size_t>(len))) {
+                                buffer_full = true;
+                            }
+                        }
+                        if (buffer_full) {
+                            std::cout << "[client " << client_id << "] payload too large" << std::endl;
+                            HttpHandler handler;
+                            std::string response = handler.build_payload_too_large_response();
+                            write_all(sock, response);
+                            close_client(sock);
+                            break;
                         }
 
                         while (true) {

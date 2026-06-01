@@ -123,6 +123,40 @@ std::string get_content_type(const std::string& path) {
     }
     return "text/plain; charset=utf-8";
 }
+
+std::string pick_default_html(const std::vector<std::string>& search_roots) {
+    std::string index_candidate;
+    for (const auto& root : search_roots) {
+        std::error_code ec;
+        std::filesystem::path base = root.empty() ? std::filesystem::path(".") : std::filesystem::path(root);
+        if (!std::filesystem::exists(base, ec) || !std::filesystem::is_directory(base, ec)) {
+            continue;
+        }
+
+        for (const auto& entry : std::filesystem::directory_iterator(base, ec)) {
+            if (ec) {
+                break;
+            }
+            if (!entry.is_regular_file(ec)) {
+                continue;
+            }
+            const std::filesystem::path path = entry.path();
+            const std::string filename = path.filename().string();
+            if (!ends_with(to_lower(filename), ".html")) {
+                continue;
+            }
+            if (to_lower(filename) == "index.html") {
+                if (index_candidate.empty()) {
+                    index_candidate = filename;
+                }
+                continue;
+            }
+            return filename;
+        }
+    }
+
+    return index_candidate.empty() ? "index.html" : index_candidate;
+}
 }
 
 std::string HttpHandler::build_bad_request_response() const {
@@ -136,11 +170,29 @@ std::string HttpHandler::build_bad_request_response() const {
         body;
 }
 
+std::string HttpHandler::build_payload_too_large_response() const {
+    const std::string body = "<h1>413 Payload Too Large</h1>";
+    return
+        "HTTP/1.1 413 Payload Too Large\r\n"
+        "Content-Type: text/html; charset=utf-8\r\n"
+        "Connection: close\r\n"
+        "Content-Length: " + std::to_string(body.size()) + "\r\n"
+        "\r\n" +
+        body;
+}
+
 std::string HttpHandler::build_response(const HttpRequest& request,
                                         const std::vector<std::string>& search_roots) const {
     std::string request_path = request.path;
     if (request_path.empty() || request_path == "/") {
-        request_path = "/tetris.html";
+        request_path = "/" + pick_default_html(search_roots);
+    }
+    else {
+        const size_t last_slash = request_path.find_last_of("/\\");
+        const size_t last_dot = request_path.find_last_of('.');
+        if (last_dot == std::string::npos || (last_slash != std::string::npos && last_dot < last_slash)) {
+            request_path += ".html";
+        }
     }
 
     std::string relative_path = request_path[0] == '/' ? request_path.substr(1) : request_path;

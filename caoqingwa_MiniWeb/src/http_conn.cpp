@@ -36,6 +36,9 @@ HttpParseResult HttpConn::parse_request(const std::string& raw, HttpRequest& req
     if (header_end == std::string::npos) {
         return HttpParseResult::NeedMoreData;
     }
+    if (header_end > kMaxHeaderSize) {
+        return HttpParseResult::BadRequest;
+    }
 
     request = HttpRequest{};
     const std::string header_block = raw.substr(0, header_end);
@@ -100,6 +103,9 @@ HttpParseResult HttpConn::parse_request(const std::string& raw, HttpRequest& req
                 return HttpParseResult::BadRequest;
             }
             content_length = static_cast<size_t>(parsed);
+            if (content_length > kMaxBodySize) {
+                return HttpParseResult::BadRequest;
+            }
         }
         catch (...) {
             return HttpParseResult::BadRequest;
