@@ -1,14 +1,8 @@
-﻿#include "http_handler.h"
+#include "http_handler.h"
+#include "util.h"
 
 
 namespace {
-std::string to_lower(std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) {
-        return static_cast<char>(std::tolower(c));
-    });
-    return s;
-}
-
 bool ends_with(const std::string& value, const std::string& suffix) {
     if (value.size() < suffix.size()) {
         return false;
@@ -77,50 +71,30 @@ std::string sanitize_relative_path(const std::string& relative_path) {
     return normalized;
 }
 
+std::string get_extension_lower(const std::string& path) {
+    const size_t dot = path.find_last_of('.');
+    if (dot == std::string::npos) {
+        return {};
+    }
+    return to_lower(path.substr(dot));
+}
+
 std::string get_content_type(const std::string& path) {
-    const std::string lower = to_lower(path);
-    if (ends_with(lower, ".html")) {
-        return "text/html; charset=utf-8";
-    }
-    if (ends_with(lower, ".css")) {
-        return "text/css; charset=utf-8";
-    }
-    if (ends_with(lower, ".js")) {
-        return "application/javascript; charset=utf-8";
-    }
-    if (ends_with(lower, ".png")) {
-        return "image/png";
-    }
-    if (ends_with(lower, ".jpg") || ends_with(lower, ".jpeg")) {
-        return "image/jpeg";
-    }
-    if (ends_with(lower, ".gif")) {
-        return "image/gif";
-    }
-    if (ends_with(lower, ".svg")) {
-        return "image/svg+xml";
-    }
-    if (ends_with(lower, ".ico")) {
-        return "image/x-icon";
-    }
-    if (ends_with(lower, ".webp")) {
-        return "image/webp";
-    }
-    if (ends_with(lower, ".bmp")) {
-        return "image/bmp";
-    }
-    if (ends_with(lower, ".ttf")) {
-        return "font/ttf";
-    }
-    if (ends_with(lower, ".woff")) {
-        return "font/woff";
-    }
-    if (ends_with(lower, ".woff2")) {
-        return "font/woff2";
-    }
-    if (ends_with(lower, ".otf")) {
-        return "font/otf";
-    }
+    const std::string ext = get_extension_lower(path);
+    if (ext == ".html") return "text/html; charset=utf-8";
+    if (ext == ".css")  return "text/css; charset=utf-8";
+    if (ext == ".js")   return "application/javascript; charset=utf-8";
+    if (ext == ".png")  return "image/png";
+    if (ext == ".jpg" || ext == ".jpeg") return "image/jpeg";
+    if (ext == ".gif")  return "image/gif";
+    if (ext == ".svg")  return "image/svg+xml";
+    if (ext == ".ico")  return "image/x-icon";
+    if (ext == ".webp") return "image/webp";
+    if (ext == ".bmp")  return "image/bmp";
+    if (ext == ".ttf")  return "font/ttf";
+    if (ext == ".woff") return "font/woff";
+    if (ext == ".woff2") return "font/woff2";
+    if (ext == ".otf")  return "font/otf";
     return "text/plain; charset=utf-8";
 }
 
@@ -159,30 +133,29 @@ std::string pick_default_html(const std::vector<std::string>& search_roots) {
 }
 }
 
-std::string HttpHandler::build_bad_request_response() const {
-    const std::string body = "<h1>400 Bad Request</h1>";
+std::string HttpHandler::build_status_response(int code, const std::string& status_text,
+                                                const std::string& body, bool keep_alive,
+                                                const std::string& content_type) const {
     return
-        "HTTP/1.1 400 Bad Request\r\n"
-        "Content-Type: text/html; charset=utf-8\r\n"
-        "Connection: close\r\n"
+        "HTTP/1.1 " + std::to_string(code) + " " + status_text + "\r\n"
+        "Content-Type: " + content_type + "\r\n"
+        "Connection: " + std::string(keep_alive ? "keep-alive" : "close") + "\r\n"
         "Content-Length: " + std::to_string(body.size()) + "\r\n"
         "\r\n" +
         body;
 }
 
+std::string HttpHandler::build_bad_request_response() const {
+    return build_status_response(400, "Bad Request", "<h1>400 Bad Request</h1>", false);
+}
+
 std::string HttpHandler::build_payload_too_large_response() const {
-    const std::string body = "<h1>413 Payload Too Large</h1>";
-    return
-        "HTTP/1.1 413 Payload Too Large\r\n"
-        "Content-Type: text/html; charset=utf-8\r\n"
-        "Connection: close\r\n"
-        "Content-Length: " + std::to_string(body.size()) + "\r\n"
-        "\r\n" +
-        body;
+    return build_status_response(413, "Payload Too Large", "<h1>413 Payload Too Large</h1>", false);
 }
 
 std::string HttpHandler::build_response(const HttpRequest& request,
                                         const std::vector<std::string>& search_roots) const {
+    const bool is_head = (request.method == "HEAD");
     std::string request_path = request.path;
     if (request_path.empty() || request_path == "/") {
         request_path = "/" + pick_default_html(search_roots);
@@ -198,14 +171,7 @@ std::string HttpHandler::build_response(const HttpRequest& request,
     std::string relative_path = request_path[0] == '/' ? request_path.substr(1) : request_path;
     relative_path = sanitize_relative_path(relative_path);
     if (relative_path.empty()) {
-        const std::string body = "<h1>404 Not Found</h1>";
-        return
-            "HTTP/1.1 404 Not Found\r\n"
-            "Content-Type: text/html; charset=utf-8\r\n"
-            "Connection: " + std::string(request.keep_alive ? "keep-alive" : "close") + "\r\n"
-            "Content-Length: " + std::to_string(body.size()) + "\r\n"
-            "\r\n" +
-            body;
+        return build_status_response(404, "Not Found", "<h1>404 Not Found</h1>", request.keep_alive);
     }
 
     std::ifstream file;
@@ -224,21 +190,11 @@ std::string HttpHandler::build_response(const HttpRequest& request,
         std::string body = body_stream.str();
 
         std::string content_type = get_content_type(relative_path);
-        return
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: " + content_type + "\r\n"
-            "Connection: " + std::string(request.keep_alive ? "keep-alive" : "close") + "\r\n"
-            "Content-Length: " + std::to_string(body.size()) + "\r\n"
-            "\r\n" +
-            body;
+        if (is_head) {
+            return build_status_response(200, "OK", "", request.keep_alive, content_type);
+        }
+        return build_status_response(200, "OK", body, request.keep_alive, content_type);
     }
 
-    const std::string body = "<h1>404 Not Found</h1>";
-    return
-        "HTTP/1.1 404 Not Found\r\n"
-        "Content-Type: text/html; charset=utf-8\r\n"
-        "Connection: " + std::string(request.keep_alive ? "keep-alive" : "close") + "\r\n"
-        "Content-Length: " + std::to_string(body.size()) + "\r\n"
-        "\r\n" +
-        body;
+    return build_status_response(404, "Not Found", "<h1>404 Not Found</h1>", request.keep_alive);
 }

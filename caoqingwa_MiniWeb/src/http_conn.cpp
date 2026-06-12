@@ -1,4 +1,5 @@
-﻿#include "http_conn.h"
+#include "http_conn.h"
+#include "util.h"
 #include <limits>
 
 
@@ -15,13 +16,6 @@ std::string trim(const std::string& s) {
     }
 
     return s.substr(begin, end - begin);
-}
-
-std::string to_lower(std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) {
-        return static_cast<char>(std::tolower(c));
-    });
-    return s;
 }
 }
 

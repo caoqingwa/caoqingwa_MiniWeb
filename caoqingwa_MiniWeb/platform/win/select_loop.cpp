@@ -1,5 +1,6 @@
-﻿#include "event_loop.h"
+#include "event_loop.h"
 #include "http_handler.h"
+#include "util.h"
 #include <winsock2.h>
 #include <stdexcept>
 #include <cstring>
@@ -54,11 +55,12 @@ private:
         std::lock_guard<std::mutex> state_lock(state_mutex, std::adopt_lock);
         std::lock_guard<std::mutex> socket_lock(socket_mutex, std::adopt_lock);
         auto it = client_ids.find(sock);
-        if (it != client_ids.end()) {
-            std::cout << "[client " << it->second << "] disconnected" << std::endl;
-            free_client_ids.push(it->second);
-            client_ids.erase(it);
+        if (it == client_ids.end()) {
+            return;
         }
+        std::cout << "[client " << it->second << "] disconnected" << std::endl;
+        free_client_ids.push(it->second);
+        client_ids.erase(it);
 
         recv_buffers.erase(sock);
         closesocket(sock);
@@ -101,7 +103,7 @@ public:
             throw std::runtime_error("bind failed");
         }
 
-        if (listen(server_fd, 32) == SOCKET_ERROR) {
+        if (listen(server_fd, SOMAXCONN) == SOCKET_ERROR) {
             throw std::runtime_error("listen failed");
         }
 
@@ -155,7 +157,7 @@ public:
                     std::cout << "[client " << client_id << "] connected" << std::endl;
                 }
                 else {
-                    char buf[1024];
+                    char buf[65536];
                     int len = recv(sock, buf, sizeof(buf), 0);
 
                     if (len <= 0) {
@@ -237,6 +239,9 @@ public:
                                     it->second.retrieve(consumed);
                                 }
                             }
+
+                            request.path = url_decode(request.path);
+                            request.query = url_decode(request.query);
 
                             std::cout << "[client " << client_id << "] request: "
                                 << request.method << " " << request.path << std::endl;

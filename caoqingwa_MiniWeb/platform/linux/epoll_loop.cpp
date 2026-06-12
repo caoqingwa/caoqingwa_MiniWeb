@@ -1,6 +1,7 @@
-﻿#include "event_loop.h"
+#include "event_loop.h"
 #include "http_handler.h"
 #include "threadpool.h"
+#include "util.h"
 #include <sys/epoll.h>
 #include <arpa/inet.h>
 #include <iostream>
@@ -36,13 +37,6 @@ std::string get_executable_dir() {
         return {};
     }
     return path.substr(0, pos);
-}
-
-std::string to_lower(std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) {
-        return static_cast<char>(std::tolower(c));
-        });
-    return s;
 }
 
 size_t parse_content_length(const std::string& header_block, bool& ok) {
@@ -222,7 +216,7 @@ public:
             throw std::runtime_error(std::string("bind failed: ") + std::strerror(errno));
         }
 
-        if (listen(server_fd, 32) < 0) {
+        if (listen(server_fd, SOMAXCONN) < 0) {
             throw std::runtime_error(std::string("listen failed: ") + std::strerror(errno));
         }
 
@@ -304,7 +298,7 @@ public:
                         continue;
                     }
 
-                    char buf[1024];
+                    char buf[65536];
                     int len = read(fd, buf, sizeof(buf));
 
                     if (len < 0 && (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)) {
@@ -363,6 +357,8 @@ public:
                             if (it != recv_buffers.end()) {
                                 it->second.retrieve(consumed);
                             }
+                            request.path = url_decode(request.path);
+                            request.query = url_decode(request.query);
                         }
 
                         const bool keep_alive = (parse_result == HttpParseResult::Ok) ? request.keep_alive : false;

@@ -4,13 +4,14 @@ A minimal HTTP web server written in C++17, built for learning network programmi
 
 ## Features
 
-- **Cross-platform**: Windows (IOCP/select) and Linux (epoll) via platform abstraction layer
+- **Cross-platform**: Windows (select) and Linux (epoll) via platform abstraction layer
 - **Thread pool**: Concurrent request handling with configurable worker threads
 - **Ring buffer**: Efficient socket I/O with prependable/readable/writable regions
-- **Static file serving**: Serves HTML, CSS, JS from configurable root directories
-- **HTTP/1.1**: Request parsing, file routing, MIME type detection
+- **Static file serving**: Serves HTML, CSS, JS, images, fonts from configurable root directories
+- **HTTP/1.1**: Request parsing, file routing, MIME type detection, Keep-Alive, HEAD method support
+- **URL decoding**: Percent-decoding (`%XX`) for request paths, supporting spaces, CJK characters, etc.
 - **Size limits**: Configurable buffer cap (2MB default), header/body limits to prevent memory exhaustion
-- **Connection timeout**: Idle connection cleanup via timer manager
+- **Connection timeout**: Idle connection cleanup via timer manager (Linux)
 
 ## Build
 
@@ -52,11 +53,17 @@ src/               Core logic
   buffer.cpp       Ring buffer (2MB cap)
   http_conn.cpp    HTTP request parser
   http_handler.cpp Response builder + static file serving
+  threadpool.cpp   Blocking thread pool
+  timer.cpp        Idle connection timeout
 include/           Headers
   buffer.h, http_conn.h, http_handler.h,
-  threadpool.h, timer.h, event_loop.h
+  threadpool.h, timer.h, event_loop.h, util.h
 http/              Static files served by the server
 ```
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for detailed change history.
 
 ## License
 

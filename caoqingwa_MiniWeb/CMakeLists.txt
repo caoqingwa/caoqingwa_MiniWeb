@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10)
 project(mini_webserver)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -19,9 +19,7 @@ add_executable(server
     ${CORE_SRC}
     ${PLATFORM_SRC}
     "include/buffer.h"
-    "src/buffer.cpp"
-    "include/http_handler.h"
-    "src/http_handler.cpp")
+    "include/http_handler.h")
 
 target_include_directories(server PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
